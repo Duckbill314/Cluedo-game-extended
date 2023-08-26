@@ -24,11 +24,11 @@ public class GameTile extends Tile
     stored = null;
   }
 
-  public void draw() {
+  public String draw() {
     if(stored == null) {
-      System.out.print(getOutput());
+      return getOutput();
     } else {
-      System.out.print(stored.getDisplayIcon());
+      return stored.getDisplayIcon();
     }
   }
 }
