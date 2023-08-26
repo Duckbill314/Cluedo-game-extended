@@ -32,6 +32,8 @@ public class Gui extends JFrame {
 
     }
 
+    // WIDGETS
+
     private JPanel map(){
         JPanel panel = new JPanel() {
             @Override
@@ -101,7 +103,7 @@ public class Gui extends JFrame {
      * @return
      */
     private JPanel tabletPassNextTurn(Player player) {
-//        String name = player.getName();
+        //String name = player.getName();
         String name = "bob";
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Press OK when the tablet has been passed to " + name);
@@ -122,7 +124,7 @@ public class Gui extends JFrame {
      * @return
      */
     private JPanel tabletPassRefute(Player player) {
-//        String name = player.getName();
+        //String name = player.getName();
         String name = "bob";
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Pass the tablet to " + name + " so they can refute");
