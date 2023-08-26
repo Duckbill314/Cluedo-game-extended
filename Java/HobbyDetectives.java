@@ -1,5 +1,6 @@
 public class HobbyDetectives {
     public static void main(String... args) {
-        new Gui();
+        Game game = new Game();
+        new Gui(game);
     }
 }

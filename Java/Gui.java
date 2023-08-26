@@ -1,34 +1,62 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
-    public Gui() {
+    private Game game;
+
+    public Gui(Game game) {
         super("Hobby Detectives");
+        this.game = game;
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize.width, screenSize.height);
         setSize(screenSize.width, screenSize.height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        menuPreset();
+        setPlayerCountPreset();
 
         setVisible(true);
     }
 
     // PRESETS
 
-    // main menu preset
-    private void menuPreset() {
+    /**
+     * Clears the current contents of the game's main frame and replaces it with the given
+     * widget in the center of the frame
+     * @param widget The JPanel to be displayed in the center of the game frame
+     */
+    private void setSingleWidgetPreset(JPanel widget) {
         getContentPane().removeAll();
-
-        JPanel userInputPanel = tabletPassNextTurn(null);
-        JPanel map = map();
-
-        add(userInputPanel, BorderLayout.SOUTH);
-        add(map, BorderLayout.CENTER);
-
+        add(widget, BorderLayout.CENTER);
+        validate();
     }
 
-    private JPanel map(){
+    /**
+     * Switches the game interface to the player count selection menu
+     */
+    private void setPlayerCountPreset() {
+        setSingleWidgetPreset(getPlayerCountWidget());
+    }
+
+    /**
+     * Switches the game interface to the player name input menu
+     */
+    private void setPlayerNamePreset() {
+        setSingleWidgetPreset(playerEnterNamesWidget());
+    }
+
+    /**
+     * Switches the game interface to the tablet pass menu
+     */
+    private void setPassTabletPreset() {
+        setSingleWidgetPreset(tabletPassNextTurnWidget());
+    }
+
+    // WIDGETS
+
+    private JPanel mapWidget(){
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -47,16 +75,23 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Asks at the start of the game for the number of players in the game
-     * 3 or 4
-     *
-     * @return
+     * Creates and returns a JPanel for selecting the number of players
+     * @return A JPanel containing the components to select the number of players
      */
-    private JPanel playerCountSelector() {
+    private JPanel getPlayerCountWidget() {
         JLabel instructionLabel = new JLabel("Select number of players");
-        String[] playerCounts = {"3", "4"};
-        JComboBox<String> playerCountSelect = new JComboBox<>(playerCounts);
+        Integer[] playerCounts = {3, 4};
+        JComboBox<Integer> playerCountSelect = new JComboBox<>(playerCounts);
         JButton OKButton = new JButton("OK");
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int i = (int)playerCountSelect.getSelectedItem();
+                game.setPlayerCount(i);
+                setPlayerNamePreset();
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -73,10 +108,24 @@ public class Gui extends JFrame {
      *
      * @return
      */
-    private JPanel playerEnterNames(int playerNumber) {
-        JLabel instructionLabel = new JLabel("Player number " + playerNumber + " please enter your name:");
+    private JPanel playerEnterNamesWidget() {
+        JLabel instructionLabel = new JLabel(String.format("Player %d, please enter your name:", game.getPlayerInitCount()+1));
         JButton OKButton = new JButton("OK");
         JTextField insertNameTextField = new JTextField(10);
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                game.addName(insertNameTextField.getText());
+                game.incrementPlayerInitCount();
+                if (game.getPlayerInitCount() < game.getPlayerCount()) {
+                    setPlayerNamePreset();
+                } else {
+                    game.setupGame();
+                    setPassTabletPreset();
+                }
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -93,17 +142,22 @@ public class Gui extends JFrame {
     /**
      * Checks whether the tablet has been passed to the next player
      *
-     * @param player
      * @return
      */
-    private JPanel tabletPassNextTurn(Player player) {
-//        String name = player.getName();
-        String name = "bob";
+    private JPanel tabletPassNextTurnWidget() {
+        String name = game.getCurrentPlayer().getName();
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Press OK when the tablet has been passed to " + name);
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
@@ -118,7 +172,7 @@ public class Gui extends JFrame {
      * @return
      */
     private JPanel tabletPassRefute(Player player) {
-//        String name = player.getName();
+        //String name = player.getName();
         String name = "bob";
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Pass the tablet to " + name + " so they can refute");

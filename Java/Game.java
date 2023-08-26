@@ -5,6 +5,7 @@ public class Game {
     public enum Direction {Up, Right, Down, Left}
 
     private int playerCount;
+    private int playerInitCount = 0;
     private List<String> names = new ArrayList<String>();
     private List<Player> players = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
@@ -22,6 +23,18 @@ public class Game {
     public Game() {}
 
     // GETTERS AND SETTERS/ADDERS
+    public int getPlayerCount() {
+        return this.playerCount;
+    }
+    public void setPlayerCount(int i) {
+        this.playerCount = i;
+    }
+    public int getPlayerInitCount() {
+        return this.playerInitCount;
+    }
+    public void incrementPlayerInitCount() {
+        this.playerInitCount++;
+    }
     public List<String> getNames() {
         return this.names;
     }
@@ -67,7 +80,7 @@ public class Game {
      * determining starting player, allocating roles, and starting the game
      * @param scanner The scanner used for user input
      */
-    private void setupGame() {
+    public void setupGame() {
         // making the players
         assignCharacters(names);
 
