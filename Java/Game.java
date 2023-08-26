@@ -624,25 +624,11 @@ public class Game {
     // END OF JAMES' WORKING CODE
 
     /**
-     * User Interactable method to start the program.
-     * Manages bootGame() return values of 0 & 1 respectively for successful or failed attempts to boot
-     */
-    public static void main(String... args) {
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
-            Game game = new Game(scanner);
-            if (game.isInProgress) {
-                game.gameManager(scanner);
-            }
-        }        
-    }
-
-    /**
      * Contains the primary gameLoop mechanics. Fails and returns 0 if error is detected, 1 if the game concludes successfully
      * Is the central hub for method calling and contains the main loop.
      */
 
-    private void gameManager(Scanner scanner) {
+    public void gameManager(Scanner scanner) {
         String input = "0";
         while (isInProgress) {
             if (turn.getIsEligible()) {
