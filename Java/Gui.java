@@ -13,26 +13,38 @@ public class Gui extends JFrame {
         setSize(screenSize.width, screenSize.height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        menuPreset();
+        playerCountPreset();
 
         setVisible(true);
     }
 
     // PRESETS
 
-    // main menu preset
-    private void menuPreset() {
+    /**
+     * Clears the current contents of the game's main frame and replaces it with the given
+     * widget in the center of the frame
+     * @param widget The JPanel to be displayed in the center of the game frame
+     */
+    private void singleWidgetPreset(JPanel widget) {
         getContentPane().removeAll();
-
-        JPanel userInputPanel = tabletPassNextTurn(null);
-        JPanel map = map();
-
-        add(userInputPanel, BorderLayout.SOUTH);
-        add(map, BorderLayout.CENTER);
-
+        add(widget, BorderLayout.CENTER);
     }
 
-    private JPanel map(){
+    /**
+     * Switches the game interface to the player count selection menu
+     */
+    private void playerCountPreset() {
+        singleWidgetPreset(getPlayerCountWidget());
+    }
+
+    /**
+     * Switches the game interface to the player name input menu
+     */
+    private void playerNamePreset() {
+        singleWidgetPreset(getPlayerNameWidget());
+    }
+
+    private JPanel mapWidget(){
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -56,7 +68,7 @@ public class Gui extends JFrame {
      *
      * @return
      */
-    private JPanel playerCountSelector() {
+    private JPanel getPlayerCountWidget() {
         JLabel instructionLabel = new JLabel("Select number of players");
         String[] playerCounts = {"3", "4"};
         JComboBox<String> playerCountSelect = new JComboBox<>(playerCounts);
@@ -70,6 +82,10 @@ public class Gui extends JFrame {
         panel.add(OKButton);
 
         return panel;
+    }
+
+    private JPanel getPlayerNameWidget() {
+        return new JPanel();
     }
 
     /**
