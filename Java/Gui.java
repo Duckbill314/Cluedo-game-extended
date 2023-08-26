@@ -13,7 +13,7 @@ public class Gui extends JFrame {
         setSize(screenSize.width, screenSize.height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        playerCountPreset();
+        setPlayerCountPreset();
 
         setVisible(true);
     }
@@ -25,7 +25,7 @@ public class Gui extends JFrame {
      * widget in the center of the frame
      * @param widget The JPanel to be displayed in the center of the game frame
      */
-    private void singleWidgetPreset(JPanel widget) {
+    private void setSingleWidgetPreset(JPanel widget) {
         getContentPane().removeAll();
         add(widget, BorderLayout.CENTER);
     }
@@ -33,18 +33,23 @@ public class Gui extends JFrame {
     /**
      * Switches the game interface to the player count selection menu
      */
-    private void playerCountPreset() {
-        singleWidgetPreset(getPlayerCountWidget());
+    private void setPlayerCountPreset() {
+        setSingleWidgetPreset(getPlayerCountWidget());
     }
 
     /**
      * Switches the game interface to the player name input menu
      */
-    private void playerNamePreset() {
-        singleWidgetPreset(getPlayerNameWidget());
+    private void setPlayerNamePreset() {
+        setSingleWidgetPreset(getPlayerNameWidget());
     }
 
-    private JPanel mapWidget(){
+
+    /**
+     * Creates and returns a JPanel representing the game board
+     * @return A JPanel representing the game board
+     */
+    private JPanel getBoardWidget(){
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -63,10 +68,8 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Asks at the start of the game for the number of players in the game
-     * 3 or 4
-     *
-     * @return
+     * Creates and returns a JPanel for selecting the number of players
+     * @return A JPanel containing the components to select the number of players
      */
     private JPanel getPlayerCountWidget() {
         JLabel instructionLabel = new JLabel("Select number of players");
