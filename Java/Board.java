@@ -172,17 +172,18 @@ public class Board {
     }
 
     /**
-     * Draws the board
+     * Returns a string representation of the board
      */
-    public void draw() {
-        // draws the Board including the players and items
+    public String draw() {
+        String res = "";
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
                 System.out.print(BORDER);
-                board[row][col].draw();
+                res += board[row][col].draw();
             }
-            System.out.println(BORDER);
+            res += (BORDER);
         }
+        return res;
     }
 
     /**

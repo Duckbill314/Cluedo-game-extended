@@ -22,7 +22,7 @@ public class Tile {
         return this.output;
     }
 
-    public void draw() {
-        System.out.print(getOutput());
+    public String draw() {
+        return (getOutput());
     }
 }
