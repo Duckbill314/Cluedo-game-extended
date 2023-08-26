@@ -43,8 +43,15 @@ public class Gui extends JFrame {
     /**
      * Switches the game interface to the player name input menu
      */
-    private void playerNamePreset() {
-        singleWidgetPreset(playerEnterNamesWidget());
+    private void setPlayerNamePreset() {
+        setSingleWidgetPreset(playerEnterNamesWidget());
+    }
+
+    /**
+     * Switches the game interface to the tablet pass menu
+     */
+    private void setPassTabletPreset() {
+        setSingleWidgetPreset(tabletPassNextTurnWidget());
     }
 
     // WIDGETS
@@ -82,7 +89,7 @@ public class Gui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int i = (int)playerCountSelect.getSelectedItem();
                 game.setPlayerCount(i);
-                playerNamePreset();
+                setPlayerNamePreset();
             }
         });
 
@@ -109,11 +116,13 @@ public class Gui extends JFrame {
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                game.addName(instructionLabel.getText());
+                game.addName(insertNameTextField.getText());
+                game.incrementPlayerInitCount();
                 if (game.getPlayerInitCount() < game.getPlayerCount()) {
-                    playerNamePreset();
+                    setPlayerNamePreset();
                 } else {
                     game.setupGame();
+                    setPassTabletPreset();
                 }
             }
         });
@@ -133,16 +142,22 @@ public class Gui extends JFrame {
     /**
      * Checks whether the tablet has been passed to the next player
      *
-     * @param player
      * @return
      */
-    private JPanel tabletPassNextTurn() {
+    private JPanel tabletPassNextTurnWidget() {
         String name = game.getCurrentPlayer().getName();
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Press OK when the tablet has been passed to " + name);
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
