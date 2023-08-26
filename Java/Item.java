@@ -64,6 +64,10 @@ public class Item
     return estate;
   }
 
+  public boolean isInEstate() {
+    return (estate != null);
+  }
+
   public String toString()
   {
     String res = String.format("[name: %s | display icon: %s | x: %d | y: %d]", getName(), getDisplayIcon(), getX(), getY());

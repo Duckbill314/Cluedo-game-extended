@@ -12,7 +12,6 @@ public class Gui extends JFrame {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize.width, screenSize.height);
-        setSize(screenSize.width, screenSize.height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setPlayerCountPreset();
@@ -30,7 +29,8 @@ public class Gui extends JFrame {
     private void setSingleWidgetPreset(JPanel widget) {
         getContentPane().removeAll();
         add(widget, BorderLayout.CENTER);
-        validate();
+        revalidate();
+        repaint();
     }
 
     /**
@@ -52,6 +52,69 @@ public class Gui extends JFrame {
      */
     private void setPassTabletPreset() {
         setSingleWidgetPreset(tabletPassNextTurnWidget());
+    }
+
+    /**
+     * Switches the game interface to the player's turn menu
+     */
+    private void setPlayerTurnPreset() {
+        getContentPane().removeAll();
+        add(playerMoveOrGuessWidget(), BorderLayout.SOUTH);
+        add(boardWidget(), BorderLayout.WEST);
+        add(worksheetWidget(), BorderLayout.EAST);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Switches the game interface to the dice roll menu
+     */
+    private void setDiceRollPreset() {
+        setSingleWidgetPreset(rollDiceWidget());
+    }
+
+    /**
+     * Switches the game interface to the movement menu
+     */
+    private void setMovementPreset() {
+        getContentPane().removeAll();
+        add(movementWidget(), BorderLayout.SOUTH);
+        add(boardWidget(), BorderLayout.WEST);
+        add(worksheetWidget(), BorderLayout.EAST);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Switches the game interface to the guessing menu
+     */
+    private void setGuessPreset() {
+        getContentPane().removeAll();
+        add(guessWidget(), BorderLayout.SOUTH);
+        add(worksheetWidget(), BorderLayout.EAST);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Switches the game interface to the tablet pass menu specific to refuting
+     */
+    private void setPassTabletRefutePreset() {
+        setSingleWidgetPreset(tabletPassRefuteWidget());
+    }
+
+    /**
+     * Switches the game interface to the refuting menu
+     */
+    private void setRefutePreset() {
+        setSingleWidgetPreset(refuteWidget());
+    }
+
+    /**
+     * Switches the game interface to the game over menu
+     */
+    private void setGameOverPreset() {
+        setSingleWidgetPreset(gameOverWidget());
     }
 
     // WIDGETS
@@ -155,7 +218,11 @@ public class Gui extends JFrame {
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
+                game.setDiceTotal(0);
+                game.setDiceRolled(false);
+                game.setGuessMade(false);
+                game.setRefuteCount(0);
+                setPlayerTurnPreset();
             }
         });
 
@@ -166,19 +233,29 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Does the refute
-     *
-     * @param player
-     * @return
+     * Asks for the tablet to be passed to the refuter
      */
-    private JPanel tabletPassRefute(Player player) {
-        //String name = player.getName();
-        String name = "bob";
+    private JPanel tabletPassRefuteWidget() {
+        game.incrementRefuteCount();
+        int guesserId = game.getPlayers().indexOf(game.getCurrentPlayer());
+        int refuterId = guesserId + game.getRefuteCount();
+        if (refuterId > game.getPlayerCount()-1) {
+            refuterId -= game.getPlayerCount();
+        }
+        game.setRefuter(refuterId);
+        String name = game.getPlayers().get(refuterId).getName();
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Pass the tablet to " + name + " so they can refute");
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setRefutePreset();
+            }
+        });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
@@ -187,13 +264,329 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Player chooses whether they move or guess
+     * Player can choose to move, guess, or end their turn
      *
      * @return
      */
-    private JPanel playerMoveOrGuess() {
-        JLabel instructionLabel = new JLabel("");
+    private JPanel playerMoveOrGuessWidget() {
+        JLabel instructionLabel = new JLabel(String.format("You are playing as %s (%s)", game.getCurrentPlayer().getCharacter().getName(), 
+            game.getCurrentPlayer().getCharacter().getDisplayIcon()));
+        JButton moveButton = new JButton("Move");
+        JButton guessButton = new JButton("Guess/Solve");
+        JButton endTurnButton = new JButton("End turn");
+
         JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        // action listeners for buttons
+        moveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (game.getCurrentPlayer().getIsEligible()) {
+                    if (!game.getDiceRolled()) {
+                        setDiceRollPreset();
+                    } else {
+                        setMovementPreset();
+                    }
+                } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                    setPlayerTurnPreset();
+                }
+            }
+        });
+        guessButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (game.getCurrentPlayer().getIsEligible() && game.getCurrentPlayer().getCharacter().isInEstate() && !game.getGuessMade()) {
+                    setGuessPreset();
+                } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                    setPlayerTurnPreset();
+                }
+            }
+        });
+        endTurnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                game.updateTurn();
+                setPassTabletPreset();
+            }
+        });
+
+        panel.add(instructionLabel);
+        panel.add(moveButton);
+        panel.add(guessButton);
+        panel.add(endTurnButton);
+
+        return panel;
+    }
+
+    /**
+     * Player can roll the dice, or return to the previous menu
+     * @return
+     */
+    private JPanel rollDiceWidget() {
+        JLabel instructionLabel = new JLabel("Roll the dice!");
+        JButton rollButton = new JButton("Roll!");
+        JButton returnButton = new JButton("Go back");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        // action listeners for buttons
+        rollButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                game.setDiceRolled(true);
+                game.setDiceTotal(game.rollDice() + game.rollDice());
+                setMovementPreset();
+            }
+        });
+        returnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setPlayerTurnPreset();
+            }
+        });
+
+        panel.add(instructionLabel);
+        panel.add(rollButton);
+        panel.add(returnButton);
+
+        return panel;
+    }
+
+    /**
+     * Player can move in one of four directions, or return to the previous menu
+     * @return
+     */
+    private JPanel movementWidget() {
+        JLabel instructionLabel = new JLabel(String.format("You have %d moves remaining", game.getDiceTotal()));
+        JButton upButton = new JButton("Up");
+        JButton rightButton = new JButton("Right");
+        JButton downButton = new JButton("Down");
+        JButton leftButton = new JButton("Left");
+        JButton returnButton = new JButton("Go back");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        // action listeners for buttons
+        upButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (game.getDiceTotal() > 0) {
+                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Up);
+                    game.decrementDiceTotal(i);
+                }
+                setMovementPreset();
+            }
+        });
+        rightButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (game.getDiceTotal() > 0) {
+                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Right);
+                    game.decrementDiceTotal(i);
+                }
+                setMovementPreset();
+            }
+        });
+        downButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (game.getDiceTotal() > 0) {
+                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Down);
+                    game.decrementDiceTotal(i);
+                }
+                setMovementPreset();
+            }
+        });
+        leftButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (game.getDiceTotal() > 0) {
+                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Left);
+                    game.decrementDiceTotal(i);
+                }
+                setMovementPreset();
+            }
+        });
+        returnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setPlayerTurnPreset();
+            }
+        });
+
+        panel.add(instructionLabel);
+        panel.add(upButton);
+        panel.add(rightButton);
+        panel.add(downButton);
+        panel.add(leftButton);
+        panel.add(returnButton);
+
+        return panel;
+    }
+
+    /**
+     * Player can make a guess using dropboxes of the characters and weapons.
+     * The estate is predetermined by the player's current estate.
+     * The player can choose to make a normal guess, or a solve attempt (or return to the previous menu);
+     * @return
+     */
+    private JPanel guessWidget() {
+        JLabel estateLabel = new JLabel(String.format("Estate: %s", game.getCurrentPlayer().getCharacter().getEstate().getName()));
+        JLabel characterLabel = new JLabel("Character: ");
+        String[] characterArray = {"Lucilla","Bert","Malina","Percy"};
+        JComboBox<String> characterBox = new JComboBox<>(characterArray);
+        JLabel weaponLabel = new JLabel("Weapon: ");
+        String[] weaponArray = {"Broom", "Scissors", "Knife", "Shovel", "iPad"};
+        JComboBox<String> weaponBox = new JComboBox<>(weaponArray);
+        JButton guessButton = new JButton("Guess");
+        JButton solveButton = new JButton("Solve");
+        JButton returnButton = new JButton("Go back");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        // action listeners for buttons
+        guessButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                game.guess((String)characterBox.getSelectedItem(), (String)weaponBox.getSelectedItem(), false);
+                setPassTabletRefutePreset();
+            }
+        });
+        solveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int result = game.guess((String)characterBox.getSelectedItem(), (String)weaponBox.getSelectedItem(), true);
+                if (result == 1) {
+                    setGameOverPreset();
+                } else {
+                    boolean gameOver = true;
+                    for (Player p : game.getPlayers()) {
+                        if (p.getIsEligible()) {
+                            gameOver = false;
+                        }
+                    }
+                    if (gameOver) {
+                        setGameOverPreset();
+                    } else {
+                        game.getCurrentPlayer().setIsEligible(false);
+                        setPlayerTurnPreset();
+                    }
+                }
+            }
+        });
+        returnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setPlayerTurnPreset();
+            }
+        });
+
+        panel.add(estateLabel);
+        panel.add(characterLabel);
+        panel.add(characterBox);
+        panel.add(weaponLabel);
+        panel.add(weaponBox);
+        panel.add(guessButton);
+        panel.add(solveButton);
+        panel.add(returnButton);
+
+        return panel;
+    }
+
+    /**
+     * Shows the board
+     * @return
+     */
+    private JPanel boardWidget() {
+        // for some reason, Swing uses html text formatting, but this is just a patchwork solution and won't be in the final result
+        // when we do the actual board
+        String boardString = game.getBoard().draw().replace("\n", "<br/>").replace(" ", "&nbsp&nbsp&nbsp");
+        boardString = "<html>" + boardString + "</html>";
+        JLabel boardLabel = new JLabel(boardString);
+
+        JPanel panel = new JPanel();
+
+        panel.add(boardLabel);
+
+        return panel;
+    }
+
+    /**
+     * Shows the player's worksheet
+     * @return
+     */
+    private JPanel worksheetWidget() {
+        String worksheetString = game.getCurrentPlayer().getWorksheet().toString().replace("\n", "<br/>");
+        worksheetString = "<html>" + worksheetString + "</html>";
+        JLabel worksheetLabel = new JLabel(worksheetString);
+
+        JPanel panel = new JPanel();
+
+        panel.add(worksheetLabel);
+
+        return panel;
+    }
+
+    /**
+     * Allows a player to select which refuteable card to use to refute.
+     * If they make a refutation, it goes back to the guesser, to end their turn.
+     * If they cannot make a refutation, it is passed around to all the other players.
+     * @return
+     */
+    private JPanel refuteWidget() {
+        int refuter = game.getRefuter();
+        java.util.List<String> cards = game.getRefuteableCards(game.getPlayers().get(refuter));
+        String[] cardArray = new String[cards.size()];
+        for (int i = 0; i < cards.size(); i++) {
+            cardArray[i] = cards.get(i);
+        }
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        if (!cards.isEmpty()) {
+            JLabel refuteLabel = new JLabel("Refute using this card: ");
+            JComboBox<String> cardBox = new JComboBox<>(cardArray);
+            JButton OKButton = new JButton("OK");
+            
+            OKButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    for (Card c : game.getCards()) {
+                        if (c.getName().equals((String)cardBox.getSelectedItem())) {
+                            game.getCurrentPlayer().getWorksheet().addShownCard(c);
+                        }
+                    }
+                    setPlayerTurnPreset();
+                }
+            });
+
+            panel.add(refuteLabel);
+            panel.add(cardBox);
+            panel.add(OKButton);
+        }
+        else {
+            JLabel refuteLabel = new JLabel("You have no cards to refute with");
+            JButton OKButton = new JButton("OK");
+            
+            OKButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getRefuteCount() < game.getPlayerCount() - 1) {
+                        setPassTabletRefutePreset();
+                    } else {
+                        setPlayerTurnPreset();
+                    }
+                }
+            });
+
+            panel.add(refuteLabel);
+            panel.add(OKButton);
+        }
+        return panel;
+    }
+
+    /**
+     * The end of the game. Shows who the winner is - either the name of the person who solved correctly,
+     * or if all players fail to solve, then "Nobody".
+     * @return
+     */
+    private JPanel gameOverWidget() {
+        JLabel messageLabel = new JLabel(String.format("Game over! The winner is: %s", game.getWinner()));
+
+        JPanel panel = new JPanel();
+
+        panel.add(messageLabel);
+
         return panel;
     }
 }

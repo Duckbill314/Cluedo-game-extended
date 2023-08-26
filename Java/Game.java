@@ -18,7 +18,13 @@ public class Game {
     private Player turn = new Player(null,null,null,false);
     private TurnOrder currentTurn = TurnOrder.Lucilla;
     private int diceTotal = 0;
+    private boolean diceRolled = false;
+    private boolean guessMade = false;
+    private int refuteCount = 0;
+    private int refuter = 0;
     private TurnOrder invalidCharacter;
+
+    private String winner = "Nobody";
 
     public Game() {}
 
@@ -71,8 +77,41 @@ public class Game {
     public int getDiceTotal() {
         return this.diceTotal;
     }
+    public void decrementDiceTotal(int amount) {
+        this.diceTotal -= amount;
+    }
+    public boolean getDiceRolled() {
+        return this.diceRolled;
+    }
+    public void setDiceRolled(boolean rolled) {
+        this.diceRolled = rolled;
+    }
     public void setDiceTotal(int i) {
         this.diceTotal = i;
+    }
+    public boolean getGuessMade() {
+        return this.guessMade;
+    }
+    public void setGuessMade(boolean guessed) {
+        this.guessMade = guessed;
+    }
+    public int getRefuteCount() {
+        return this.refuteCount;
+    }
+    public void setRefuteCount(int i) {
+        this.refuteCount = i;
+    }
+    public void incrementRefuteCount() {
+        this.refuteCount++;
+    }
+    public int getRefuter() {
+        return this.refuter;
+    }
+    public void setRefuter(int i) {
+        this.refuter = i;
+    }
+    public String getWinner() {
+        return this.winner;
     }
 
     /**
@@ -102,7 +141,7 @@ public class Game {
                     }
                 }
             }
-            nullCharacter =  remainingCharacters.get(0);
+            nullCharacter = remainingCharacters.get(0);
         }
 
         // structure the characters
@@ -195,6 +234,9 @@ public class Game {
         }
     }
 
+    /**
+     * Create and distribute all the weapons to random estates
+     */
     private void initialiseWeapons() {
         String[][] weaponData = {{"Broom", "b"}, {"Scissors", "s"}, {"Knife", "k"}, {"Shovel", "v"}, {"iPad", "i"}};
         for (String[] data : weaponData) {
@@ -274,7 +316,8 @@ public class Game {
      * let the player do a guess (assumed check for in a estate has already passed)
      * return 1 for a successful solve, 0 otherwise
      */
-    private int guess(String character, String weapon, boolean solve) {
+    public int guess(String character, String weapon, boolean solve) {
+        guessMade = true;
         Player p = getCurrentPlayer();
         String estate = p.getCharacter().getEstate().getName();
 
@@ -304,35 +347,19 @@ public class Game {
         // determining if the player won (only if they made a solve attempt)
         if (solve) {
             if (didPlayerWin()) {
+                winner = p.getName();
                 return 1;
             }
         }
 
         return 0;
     }
-            
-    /* 
-    TODO: INCORPORATE THIS LOGIC FLOW INTO THE GUI STATE MACHINE
-    
-    // get current player and their array index
-    Player guesser = getCurrentPlayer();
-    int guesserId = getPlayers().indexOf(guesser);
 
-    // then we need to let the next 3 players refute, but only if they have a card in the guess
-    for (int i = 0; i < 3; i++) {
-        int playerId = i + guesserId + 1;
-        if (playerId > 3) {
-            playerId = playerId - 4;
-        }
-
-        List<String> refuteableCards = getRefuteableCards(players.get(playerId));
-        if (!refuteableCards.isEmpty()) {
-            // get player to select from a combobox to refute
-        }
-    }
-    // no refutes, move on to next turn as usual
-    */
-
+    /**
+     * Checks to see whether a player's guess was correct
+     * 
+     * @return true if correct, false otherwise
+     */
     private boolean didPlayerWin() {
         boolean win = true;
             for (Card c : cards) {
@@ -359,7 +386,14 @@ public class Game {
         return win;
     }
 
-    private List<String> getRefuteableCards(Player p) {
+    /**
+     * A refuteable card is a card in the guess attempt that a player (the refuter) possesses.
+     * 
+     * @param p the refuter
+     * 
+     * @return the list of all refuteable cards
+     */
+    public List<String> getRefuteableCards(Player p) {
         List<String> refuteableCards = new ArrayList<>();
         for (Card c : p.getCards()) {
             if (currentGuess.contains(c.getName())) {
@@ -372,7 +406,7 @@ public class Game {
     /**
      * Method to randomly return a number 1-6
      */
-    private int rollDice() {
+    public int rollDice() {
         double max = 6;
         double min = 1;
         int dice = (int) (Math.random() * (max - min + 1) + min); // implement random number 1-6 to simulate dice roll
@@ -439,7 +473,7 @@ public class Game {
         return 0;
     }
 
-    private int moveInDirection(Character character, Direction direction) {
+    public int moveInDirection(Character character, Direction direction) {
 
         // Find coordinates of next direction, or which exit to take
         int newY = character.getY();
@@ -480,6 +514,32 @@ public class Game {
             return moveChar(character, newY, newX);
         }
         return 0;
+    }
+
+    public void updateTurn() {
+        int index = players.indexOf(turn);
+            index++;
+            if(index == players.size()){
+                index = 0;
+            }
+            switch (index) {
+                case 1:
+                    currentTurn = TurnOrder.Bert;
+                    turn = players.get(index);
+                    break;
+                case 2:
+                    currentTurn = TurnOrder.Malina;
+                    turn = players.get(index);
+                    break;
+                case 3:
+                    currentTurn = TurnOrder.Percy;
+                    turn = players.get(index);
+                    break;
+                case 0:
+                    currentTurn = TurnOrder.Lucilla;
+                    turn = players.get(index);
+                    break;
+            }
     }
 
 
