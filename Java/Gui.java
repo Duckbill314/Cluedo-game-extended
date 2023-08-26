@@ -2,8 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Gui extends JFrame {
-    public Gui() {
+    private Game game;
+
+    public Gui(Game game) {
         super("Hobby Detectives");
+        this.game = game;
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize.width, screenSize.height);
         setSize(screenSize.width, screenSize.height);
