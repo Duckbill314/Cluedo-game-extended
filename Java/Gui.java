@@ -19,7 +19,7 @@ public class Gui extends JFrame {
     private void menuPreset() {
         getContentPane().removeAll();
         JPanel userInputPanel = playerCountSelector();
-        add(userInputPanel, BorderLayout.SOUTH);
+        add(userInputPanel, BorderLayout.NORTH);
     }
 
     // WIDGETS
