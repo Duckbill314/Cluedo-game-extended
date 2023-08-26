@@ -178,10 +178,11 @@ public class Board {
         String res = "";
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
-                System.out.print(BORDER);
+                res += BORDER;
                 res += board[row][col].draw();
             }
-            res += (BORDER);
+            res += BORDER;
+            res += "\n";
         }
         return res;
     }
