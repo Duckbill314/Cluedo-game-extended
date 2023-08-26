@@ -528,6 +528,7 @@ public class Gui extends JFrame {
                     board.add(board.gameTile(row, col, displayIcon));
                 }
                 else {
+                    //TODO change to board.enteranceTile so that its more clean
                     board.add(board.gameTile(row, col, ""));
                 }
             }
