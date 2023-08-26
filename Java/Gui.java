@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
     private Game game;
@@ -28,6 +30,7 @@ public class Gui extends JFrame {
     private void singleWidgetPreset(JPanel widget) {
         getContentPane().removeAll();
         add(widget, BorderLayout.CENTER);
+        validate();
     }
 
     /**
@@ -41,8 +44,10 @@ public class Gui extends JFrame {
      * Switches the game interface to the player name input menu
      */
     private void playerNamePreset() {
-        singleWidgetPreset(getPlayerNameWidget());
+        singleWidgetPreset(playerEnterNamesWidget());
     }
+
+    // WIDGETS
 
     private JPanel mapWidget(){
         JPanel panel = new JPanel() {
@@ -70,9 +75,18 @@ public class Gui extends JFrame {
      */
     private JPanel getPlayerCountWidget() {
         JLabel instructionLabel = new JLabel("Select number of players");
-        String[] playerCounts = {"3", "4"};
-        JComboBox<String> playerCountSelect = new JComboBox<>(playerCounts);
+        Integer[] playerCounts = {3, 4};
+        JComboBox<Integer> playerCountSelect = new JComboBox<>(playerCounts);
         JButton OKButton = new JButton("OK");
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int i = (int)playerCountSelect.getSelectedItem();
+                game.setPlayerCount(i);
+                playerNamePreset();
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -84,19 +98,27 @@ public class Gui extends JFrame {
         return panel;
     }
 
-    private JPanel getPlayerNameWidget() {
-        return new JPanel();
-    }
-
     /**
      * Asks for the user to enter their name
      *
      * @return
      */
-    private JPanel playerEnterNames(int playerNumber) {
-        JLabel instructionLabel = new JLabel("Player number " + playerNumber + " please enter your name:");
+    private JPanel playerEnterNamesWidget() {
+        JLabel instructionLabel = new JLabel(String.format("Player %d, please enter your name:", game.getPlayerInitCount()+1));
         JButton OKButton = new JButton("OK");
         JTextField insertNameTextField = new JTextField(10);
+
+        // action listener for button
+        OKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                game.addName(instructionLabel.getText());
+                if (game.getPlayerInitCount() < game.getPlayerCount()) {
+                    playerNamePreset();
+                } else {
+                    game.setupGame();
+                }
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -116,9 +138,8 @@ public class Gui extends JFrame {
      * @param player
      * @return
      */
-    private JPanel tabletPassNextTurn(Player player) {
-        //String name = player.getName();
-        String name = "bob";
+    private JPanel tabletPassNextTurn() {
+        String name = game.getCurrentPlayer().getName();
         JButton OKButton = new JButton("OK");
         JLabel instructionLabel = new JLabel("Press OK when the tablet has been passed to " + name);
 
