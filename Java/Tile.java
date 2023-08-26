@@ -7,7 +7,7 @@ public class Tile {
     public Tile(int yCoord, int xCoord) {
         this.yCoord = yCoord;
         this.xCoord = xCoord;
-        this.output = " ";
+        this.output = "";
     }
 
     public int getYCoord() {

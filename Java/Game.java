@@ -117,7 +117,6 @@ public class Game {
     /**
      * Sets up the game by initializing the number of players, collecting player names,
      * determining starting player, allocating roles, and starting the game
-     * @param scanner The scanner used for user input
      */
     public void setupGame() {
         // making the players
