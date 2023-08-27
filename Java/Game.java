@@ -113,6 +113,12 @@ public class Game {
     public String getWinner() {
         return this.winner;
     }
+    public void clearUsedTiles() {
+        for (GameTile t : usedGameTiles) {
+            t.clearStored();
+        }
+        this.usedGameTiles.clear();
+    }
 
     /**
      * Sets up the game by initializing the number of players, collecting player names,
@@ -672,9 +678,6 @@ public class Game {
                     currentTurn = TurnOrder.Lucilla;
                     turn = players.get(index);
                     break;
-            }
-            for (GameTile t : usedGameTiles) {
-                t.setStored(null);
             }
             boolean lose = true;
             for(Player p : players){

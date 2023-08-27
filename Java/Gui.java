@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,6 +92,7 @@ public class Gui extends JFrame {
     private void setGuessPreset() {
         getContentPane().removeAll();
         add(guessWidget(), BorderLayout.SOUTH);
+        add(boardWidget(), BorderLayout.WEST);
         add(worksheetWidget(), BorderLayout.EAST);
         revalidate();
         repaint();
@@ -207,6 +207,7 @@ public class Gui extends JFrame {
                 game.setDiceRolled(false);
                 game.setGuessMade(false);
                 game.setRefuteCount(0);
+                game.clearUsedTiles();
                 setPlayerTurnPreset();
             }
         });
@@ -471,13 +472,8 @@ public class Gui extends JFrame {
 
         return panel;
     }
-
-    /**
-     * Shows the board
-     *
-     * @return
-     */
-    private JPanel boardWidgetOld() {
+    
+    /* private JPanel boardWidgetOld() {
         // for some reason, Swing uses html text formatting, but this is just a patchwork solution and won't be in the final result
         // when we do the actual board
         String boardString = game.getBoard().draw().replace("\n", "<br/>").replace(" ", "&nbsp&nbsp&nbsp");
@@ -489,7 +485,7 @@ public class Gui extends JFrame {
         panel.add(boardLabel);
 
         return panel;
-    }
+    } */
 
     /**
      * Creates full board by creating a board object and then adding cells
@@ -497,7 +493,7 @@ public class Gui extends JFrame {
      * @return
      */
     private JPanel boardWidget() {
-        Board board = new Board();
+        BoardPanel board = new BoardPanel();
         board.setLayout(new GridLayout(24, 24, 0, 0));
         for (int row = 0; row < 24; row++) {
             for (int col = 0; col < 24; col++) {
@@ -505,12 +501,12 @@ public class Gui extends JFrame {
 
                 if (tile instanceof WallTile) {
                     board.add(board.wallTile(row, col));
-                } else if (tile instanceof GameTile gameTile) {
-                    String displayIcon = gameTile.getStored().getDisplayIcon();
+                } else if (tile instanceof GameTile) {
+                    String displayIcon = ((GameTile)tile).getStored().getDisplayIcon();
                     board.add(board.gameTile(row, col, displayIcon));
                 }
                 else {
-                    //TODO change to board.enteranceTile so that its more clean
+                    //TODO change to board.entranceTile so that its more clean
                     board.add(board.gameTile(row, col, ""));
                 }
             }
@@ -518,7 +514,7 @@ public class Gui extends JFrame {
         return board;
     }
 
-    class Board extends JPanel {
+    class BoardPanel extends JPanel {
         private final int squareSize = 50;
         private final Color wallTileColor = Color.BLACK;
         private final Color tileBorderColor = Color.BLACK;
