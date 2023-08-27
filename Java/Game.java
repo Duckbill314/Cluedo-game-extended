@@ -15,7 +15,7 @@ public class Game {
         new Character("Bert", "B", 1, 9), 
         new Character("Malina", "M", 9, 22), 
         new Character("Percy", "P", 22, 11)));
-
+    private List<Character> mofifiableCharacterList = new ArrayList<>(characters);
     private Board board = new Board();
     private List<GameTile> usedGameTiles = new ArrayList<>();
     private List<String> currentGuess = new ArrayList<>();
@@ -37,6 +37,15 @@ public class Game {
     public int getPlayerCount() {
         return this.playerCount;
     }
+    
+    public List<Character> getMofifiableCharacterList(){
+        return mofifiableCharacterList;
+    }
+    
+    public void removeFromMofifiableCharacterList(int i){
+        mofifiableCharacterList.remove(i);
+    }
+    
     public void setPlayerCount(int i) {
         this.playerCount = i;
     }
@@ -130,8 +139,7 @@ public class Game {
      * determining starting player, allocating roles, and starting the game
      */
     public void setupGame() {
-        // making the players
-        assignCharacters(names);
+       
 
         // get the unused character in 3 player scenario
         List<Player> orderedPlayers = new ArrayList<>();
@@ -201,58 +209,6 @@ public class Game {
     }
 
     /**
-     * Assigns each player a character randomly (must be called after makeCards())
-     * @param names The list of player names
-     */
-    private void assignCharacters(List<String> names) {
-        List<Character> availableCharacters = new ArrayList<Character>();
-        for (Character c : characters) {
-            availableCharacters.add(c);
-        }
-        
-        // Creates the player objects and randomly assigns them a character
-        for (int i = 0; i < playerCount; i++) {
-            int randomIndex = new Random().nextInt(availableCharacters.size());
-            Character character = availableCharacters.remove(randomIndex);
-            players.add(new Player(character, new Worksheet(), names.get(i), true));
-        }
-
-        // Reorders the players list according to the sequence L->B->M->P
-        List<Player> orderedPlayers = new ArrayList<>();
-        for (TurnOrder character : TurnOrder.values()) {
-            for (Player player : players) {
-                if (player.getCharacter().getName().equals(character.toString())) {
-                    orderedPlayers.add(player);
-                    break;
-                }
-            }
-        }
-        players = orderedPlayers;
-
-        // Finds the TurnOrder enum value for the invalid character (if playing with only 3 characters)
-        if(playerCount == 3) {
-
-            for (TurnOrder character : TurnOrder.values()) {
-                boolean characterFound = false;
-
-                // Check each player to see if one of them has this character
-                for (Player player : players) {
-                    if (player.getCharacter().getName().equals(character.toString())) {
-                        characterFound = true;
-                        break;
-                    }
-                }
-
-                // If no players have this character, it's the invalid character
-                if (!characterFound) {
-                    invalidCharacter = character;
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
      * Create and distribute all the weapons to random estates
      */
     private void initialiseWeapons() {
@@ -294,7 +250,6 @@ public class Game {
      */
     private void pickMurderCards() {
         List<String> typesPickedForMurder = new ArrayList<>();
-        System.out.println();
         while (typesPickedForMurder.size() != 3) {
             Random random = new Random();
             int randomIndex = random.nextInt(cards.size());
