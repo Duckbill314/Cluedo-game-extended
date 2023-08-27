@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 
 public class Gui extends JFrame {
     private Game game;
@@ -10,13 +11,73 @@ public class Gui extends JFrame {
         super("Hobby Detectives");
         this.game = game;
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(screenSize.width, screenSize.height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu switchMenu = new JMenu("Switch Panels");
+
+        JMenuItem textItem = new JMenuItem("Text Panel");
+
+        // get sidebar
+        SidePanel sidebar = sideWidget();
+        sidebar.setPreferredSize(new Dimension(160, 0));
+
+        TextPanel textPanel = textWidget();
+
+        textItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    getContentPane().removeAll();
+                    getContentPane().setLayout(new BorderLayout()); // Reset the layout
+
+                    // Add the sidebar to the side
+                    getContentPane().add(sidebar, BorderLayout.EAST);
+
+                    // Add the textPanel to the center
+                    getContentPane().add(textPanel, BorderLayout.CENTER);
+
+                    revalidate();
+                    repaint();
+                    setSize(500, 600);
+
+                }
+            });
+
+        switchMenu.add(textItem);
+        JMenuItem boardItem = new JMenuItem("Board Panel");
+
+        boardItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setSize(600, 600);
+                    getContentPane().removeAll();
+                    //add boardpannel
+                    //getContentPane().add(BoardPanel(), BorderLayout.CENTER);
+
+                    // Add the sidebar to the side
+                    getContentPane().add(sidebar, BorderLayout.EAST);
+
+                    revalidate();
+                    repaint();
+                }
+            });
+
+        switchMenu.add(boardItem);
+        menuBar.add(switchMenu);
+        setJMenuBar(menuBar);
+
+        //what the users see on start
+
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(textPanel, BorderLayout.CENTER);
+        getContentPane().add(sidebar, BorderLayout.EAST);
+
+        pack();
+        setSize(500,600);
+        setVisible(true);
 
         setPlayerCountPreset();
 
-        setVisible(true);
     }
 
     // PRESETS
@@ -134,12 +195,12 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int i = (int) playerCountSelect.getSelectedItem();
-                game.setPlayerCount(i);
-                setPlayerNamePreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    int i = (int) playerCountSelect.getSelectedItem();
+                    game.setPlayerCount(i);
+                    setPlayerNamePreset();
+                }
+            });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -163,17 +224,17 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.addName(insertNameTextField.getText());
-                game.incrementPlayerInitCount();
-                if (game.getPlayerInitCount() < game.getPlayerCount()) {
-                    setPlayerNamePreset();
-                } else {
-                    game.setupGame();
-                    setPassTabletPreset();
+                public void actionPerformed(ActionEvent e) {
+                    game.addName(insertNameTextField.getText());
+                    game.incrementPlayerInitCount();
+                    if (game.getPlayerInitCount() < game.getPlayerCount()) {
+                        setPlayerNamePreset();
+                    } else {
+                        game.setupGame();
+                        setPassTabletPreset();
+                    }
                 }
-            }
-        });
+            });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -202,15 +263,15 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.setDiceTotal(0);
-                game.setDiceRolled(false);
-                game.setGuessMade(false);
-                game.setRefuteCount(0);
-                game.clearUsedTiles();
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.setDiceTotal(0);
+                    game.setDiceRolled(false);
+                    game.setGuessMade(false);
+                    game.setRefuteCount(0);
+                    game.clearUsedTiles();
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
@@ -238,10 +299,10 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setRefutePreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setRefutePreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
@@ -256,7 +317,7 @@ public class Gui extends JFrame {
      */
     private JPanel playerMoveOrGuessWidget() {
         JLabel instructionLabel = new JLabel(String.format("You are playing as %s (%s)", game.getCurrentPlayer().getCharacter().getName(),
-                game.getCurrentPlayer().getCharacter().getDisplayIcon()));
+                    game.getCurrentPlayer().getCharacter().getDisplayIcon()));
         JButton moveButton = new JButton("Move");
         JButton guessButton = new JButton("Guess/Solve");
         JButton endTurnButton = new JButton("End turn");
@@ -266,33 +327,33 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         moveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getCurrentPlayer().getIsEligible()) {
-                    if (!game.getDiceRolled()) {
-                        setDiceRollPreset();
-                    } else {
-                        setMovementPreset();
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getCurrentPlayer().getIsEligible()) {
+                        if (!game.getDiceRolled()) {
+                            setDiceRollPreset();
+                        } else {
+                            setMovementPreset();
+                        }
+                    } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                        setPlayerTurnPreset();
                     }
-                } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
-                    setPlayerTurnPreset();
                 }
-            }
-        });
+            });
         guessButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getCurrentPlayer().getIsEligible() && game.getCurrentPlayer().getCharacter().isInEstate() && !game.getGuessMade()) {
-                    setGuessPreset();
-                } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
-                    setPlayerTurnPreset();
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getCurrentPlayer().getIsEligible() && game.getCurrentPlayer().getCharacter().isInEstate() && !game.getGuessMade()) {
+                        setGuessPreset();
+                    } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                        setPlayerTurnPreset();
+                    }
                 }
-            }
-        });
+            });
         endTurnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.updateTurn();
-                setPassTabletPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.updateTurn();
+                    setPassTabletPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(moveButton);
@@ -317,17 +378,17 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         rollButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.setDiceRolled(true);
-                game.setDiceTotal(game.rollDice() + game.rollDice());
-                setMovementPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.setDiceRolled(true);
+                    game.setDiceTotal(game.rollDice() + game.rollDice());
+                    setMovementPreset();
+                }
+            });
         returnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(rollButton);
@@ -354,46 +415,46 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         upButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Up);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Up);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         rightButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Right);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Right);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         downButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Down);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Down);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         leftButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Left);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Left);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         returnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(upButton);
@@ -429,37 +490,37 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         guessButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), false);
-                setPassTabletRefutePreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), false);
+                    setPassTabletRefutePreset();
+                }
+            });
         solveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int result = game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), true);
-                if (result == 1) {
-                    setGameOverPreset();
-                } else {
-                    boolean gameOver = true;
-                    for (Player p : game.getPlayers()) {
-                        if (p.getIsEligible()) {
-                            gameOver = false;
-                        }
-                    }
-                    if (gameOver) {
+                public void actionPerformed(ActionEvent e) {
+                    int result = game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), true);
+                    if (result == 1) {
                         setGameOverPreset();
                     } else {
-                        game.getCurrentPlayer().setIsEligible(false);
-                        setPlayerTurnPreset();
+                        boolean gameOver = true;
+                        for (Player p : game.getPlayers()) {
+                            if (p.getIsEligible()) {
+                                gameOver = false;
+                            }
+                        }
+                        if (gameOver) {
+                            setGameOverPreset();
+                        } else {
+                            game.getCurrentPlayer().setIsEligible(false);
+                            setPlayerTurnPreset();
+                        }
                     }
                 }
-            }
-        });
+            });
         returnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(estateLabel);
         panel.add(characterLabel);
@@ -472,19 +533,19 @@ public class Gui extends JFrame {
 
         return panel;
     }
-    
+
     /* private JPanel boardWidgetOld() {
-        // for some reason, Swing uses html text formatting, but this is just a patchwork solution and won't be in the final result
-        // when we do the actual board
-        String boardString = game.getBoard().draw().replace("\n", "<br/>").replace(" ", "&nbsp&nbsp&nbsp");
-        boardString = "<html>" + boardString + "</html>";
-        JLabel boardLabel = new JLabel(boardString);
+    // for some reason, Swing uses html text formatting, but this is just a patchwork solution and won't be in the final result
+    // when we do the actual board
+    String boardString = game.getBoard().draw().replace("\n", "<br/>").replace(" ", "&nbsp&nbsp&nbsp");
+    boardString = "<html>" + boardString + "</html>";
+    JLabel boardLabel = new JLabel(boardString);
 
-        JPanel panel = new JPanel();
+    JPanel panel = new JPanel();
 
-        panel.add(boardLabel);
+    panel.add(boardLabel);
 
-        return panel;
+    return panel;
     } */
 
     /**
@@ -523,13 +584,13 @@ public class Gui extends JFrame {
 
         public JPanel wallTile(int row, int col) {
             JPanel panel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.setColor(wallTileColor);
-                    g.fillRect(0, 0, squareSize, squareSize);
-                }
-            };
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        super.paintComponent(g);
+                        g.setColor(wallTileColor);
+                        g.fillRect(0, 0, squareSize, squareSize);
+                    }
+                };
 
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
             panel.setPreferredSize(new Dimension(squareSize, squareSize));
@@ -538,31 +599,96 @@ public class Gui extends JFrame {
 
         public JPanel gameTile(int row, int col, String letter) {
             JPanel panel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.setColor(gameTileColor);
-                    g.fillRect(0, 0, squareSize, squareSize);
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        super.paintComponent(g);
+                        g.setColor(gameTileColor);
+                        g.fillRect(0, 0, squareSize, squareSize);
 
-                    if (!letter.isEmpty()) {
-                        // Set a distinct color for the letter
-                        g.setColor(itemLetterColor);
+                        if (!letter.isEmpty()) {
+                            // Set a distinct color for the letter
+                            g.setColor(itemLetterColor);
 
-                        // Drawing the letter
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        FontMetrics fm = g.getFontMetrics();
-                        int x = (squareSize - fm.charWidth(letter.charAt(0))) / 2;  // Use charAt(0) to get the first character from the string
-                        int y = (squareSize + fm.getAscent() - fm.getDescent()) / 2;
-                        g.drawString(letter, x, y);
+                            // Drawing the letter
+                            g.setFont(new Font("Arial", Font.BOLD, 20));
+                            FontMetrics fm = g.getFontMetrics();
+                            int x = (squareSize - fm.charWidth(letter.charAt(0))) / 2;  // Use charAt(0) to get the first character from the string
+                            int y = (squareSize + fm.getAscent() - fm.getDescent()) / 2;
+                            g.drawString(letter, x, y);
+                        }
                     }
-                }
-            };
+                };
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
             panel.setPreferredSize(new Dimension(squareSize, squareSize));
             return panel;
         }
     }
 
+    /**
+     *  creates a text box that can be written to for user communication 
+     */
+    public TextPanel textWidget(){
+        TextPanel  text = new TextPanel();
+        return text;
+    }
+
+    public class TextPanel extends JPanel {
+        private JTextArea displayTextArea;
+
+        public TextPanel() {
+            setLayout(new GridBagLayout());
+
+            displayTextArea = new JTextArea(20, 20);
+            displayTextArea.setEditable(false);
+            JScrollPane displayScrollPane = new JScrollPane(displayTextArea);
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            gbc.anchor = GridBagConstraints.NORTH;
+
+            add(displayScrollPane, gbc);
+        }
+
+        public void addText(String text) {
+            displayTextArea.append(text + "\n");
+        }
+
+        public void clearText() {
+            displayTextArea.setText("");;
+        }
+    }
+
+    /**
+     *  creates a text box that can be written to for user communication 
+     */
+    public SidePanel sideWidget(){
+        SidePanel side = new SidePanel();
+        return side;
+    }
+    
+    class SidePanel extends JPanel {
+        
+    public SidePanel() {}
+
+    public void addPanel(JPanel adding, BorderLayout b) {
+        add(adding,b);
+        add(adding,b);
+        revalidate();
+        repaint();
+    }
+
+    public void clearPanel(JPanel clearing) {
+        clearing.removeAll();
+        clearing.revalidate();
+        clearing.repaint();
+    }
+    }
+
+    
     /**
      * Shows the player's worksheet
      *
@@ -604,15 +730,15 @@ public class Gui extends JFrame {
             JButton OKButton = new JButton("OK");
 
             OKButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    for (Card c : game.getCards()) {
-                        if (c.getName().equals((String) cardBox.getSelectedItem())) {
-                            game.getCurrentPlayer().getWorksheet().addShownCard(c);
+                    public void actionPerformed(ActionEvent e) {
+                        for (Card c : game.getCards()) {
+                            if (c.getName().equals((String) cardBox.getSelectedItem())) {
+                                game.getCurrentPlayer().getWorksheet().addShownCard(c);
+                            }
                         }
+                        setPlayerTurnPreset();
                     }
-                    setPlayerTurnPreset();
-                }
-            });
+                });
 
             panel.add(refuteLabel);
             panel.add(cardBox);
@@ -622,14 +748,14 @@ public class Gui extends JFrame {
             JButton OKButton = new JButton("OK");
 
             OKButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (game.getRefuteCount() < game.getPlayerCount() - 1) {
-                        setPassTabletRefutePreset();
-                    } else {
-                        setPlayerTurnPreset();
+                    public void actionPerformed(ActionEvent e) {
+                        if (game.getRefuteCount() < game.getPlayerCount() - 1) {
+                            setPassTabletRefutePreset();
+                        } else {
+                            setPlayerTurnPreset();
+                        }
                     }
-                }
-            });
+                });
 
             panel.add(refuteLabel);
             panel.add(OKButton);
@@ -653,4 +779,3 @@ public class Gui extends JFrame {
         return panel;
     }
 }
-
