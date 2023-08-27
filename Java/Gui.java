@@ -605,8 +605,7 @@ public class Gui extends JFrame {
                     board.add(board.gameTile(row, col, displayIcon));
                 }
                 else {
-                    //TODO change to board.entranceTile so that its more clean
-                    board.add(board.gameTile(row, col, ""));
+                    board.add(board.enteranceTile(row, col));
                 }
             }
         }
@@ -616,6 +615,7 @@ public class Gui extends JFrame {
     class BoardPanel extends JPanel {
         private final int squareSize = 20;
         private final Color wallTileColor = Color.BLACK;
+        private final Color enteranceTileColor = Color.DARK_GRAY;
         private final Color tileBorderColor = Color.BLACK;
         private final Color gameTileColor = Color.GRAY;
         private final Color itemLetterColor = Color.CYAN;
@@ -660,6 +660,24 @@ public class Gui extends JFrame {
             panel.setPreferredSize(new Dimension(squareSize, squareSize));
             return panel;
         }
+
+
+        public JPanel enteranceTile(int row, int col) {
+            JPanel panel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.setColor(enteranceTileColor);
+                    g.fillRect(0, 0, squareSize, squareSize);
+                }
+            };
+
+            panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
+            panel.setPreferredSize(new Dimension(squareSize, squareSize));
+            return panel;
+        }
+
+
     }
     
     /**
