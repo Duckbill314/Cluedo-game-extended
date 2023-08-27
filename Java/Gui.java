@@ -63,9 +63,10 @@ public class Gui extends JFrame {
             getContentPane().removeAll();
             getContentPane().setLayout(new BorderLayout()); // Reset the layout
             
-            getContentPane().add(boardPanel,BorderLayout.WEST);
+          
             getContentPane().add(sidebar, BorderLayout.EAST);   
-           
+
+            splitPane.setTopComponent(boardPanel);
             splitPane.setBottomComponent(bottomBar);
             getContentPane().add(splitPane, BorderLayout.CENTER);
             getContentPane().add(sidebar, BorderLayout.EAST);
@@ -631,7 +632,7 @@ public class Gui extends JFrame {
     }
 
     class BoardPanel extends JPanel {
-        private final int squareSize = 50;
+        private final int squareSize = 20;
         private final Color wallTileColor = Color.BLACK;
         private final Color tileBorderColor = Color.BLACK;
         private final Color gameTileColor = Color.GRAY;
