@@ -164,15 +164,22 @@ public class Game {
 
         // Randomly decides starting player
         Random random = new Random();
-        do {
+        Player startingPlayer = null;
+
+        while (startingPlayer == null) {
             int startingPlayerIndex = random.nextInt(playerCount);
             currentTurn = TurnOrder.values()[startingPlayerIndex];
-        } while (currentTurn == invalidCharacter);
-        for (Player p : players) {
-            if (Objects.equals(p.getCharacter().getName(), currentTurn.name())) {
-                turn = p;
+
+            for (Player p : players) {
+                // If valid starting player found
+                if (Objects.equals(p.getCharacter().getName(), currentTurn.name())) {
+                    startingPlayer = p;
+                    break;
+                }
             }
         }
+
+        turn = startingPlayer;
 
         // Update the tiles that contain characters on the board
         for (Character c : characters) {
