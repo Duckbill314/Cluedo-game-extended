@@ -1,0 +1,78 @@
+class HobbyDetectives {
+  int playerCount = 0;
+  int playersAdded = 0;
+  boolean diceRolled = false;
+  diceTotal = 0;
+  boolean guessMade = false;
+  boolean isInEstate = false;
+  int refutesMade = 0;
+  boolean solveSuccess = false;
+  boolean everyoneLoses = false;
+  GameState {
+    
+    SelectPlayerCount {
+      playerCountSelected / {playerCount = 4;} -> GetPlayerName;
+    }
+    
+    GetPlayerName {
+      [playersAdded < playerCount] addPlayer / {playersAdded++;} -> GetPlayerName;
+      [playersAdded == playerCount] startGame -> PassTablet;
+    }
+    
+    PassTablet {
+      passTablet / {
+      	diceRolled = false;
+        guessMade = false;
+        refutesMade = 0;
+      } -> PlayerTurn;
+    }
+    
+    PlayerTurn {
+      [!diceRolled] makeMove -> DiceRolled;
+      [diceRolled] makeMove -> Movement;
+      [isInEstate && !guessMade] makeGuess -> GuessOrSolve;
+      endTurn -> PassTablet;
+    }
+    
+    DiceRolled {
+      rollDice / {diceRolled = true; diceTotal = 12;} -> Movement;
+      goBack -> PlayerTurn;
+    }
+    
+    Movement {
+      [diceTotal > 0] movements / {availableMoves = false; diceTotal--;} -> Movement;
+      goBack -> PlayerTurn;      
+  	}
+    
+    GuessOrSolve {
+      guess / {guessMade = true;} -> PassTabletRefute;
+      [!solveSuccess] solve / {guessMade = true;} -> PlayerTurn;
+      [solveSuccess] solve / {guessMade = true;} -> GameOver;
+      [everyoneLoses] solve / {guessMade = true;} -> GameOver;
+      goBack -> PlayerTurn;
+    }
+    
+    RefuteLoop {
+      PassTabletRefute {
+      	refute / {refutesMade++;} -> Refute;
+      }
+      
+      Refute {
+        [refutesMade < (playerCount - 1)] refute -> PassTabletRefute;
+        [refutesMade == (playerCount - 1)] endRefutes -> PlayerTurn;
+      }
+    }
+    
+    GameOver {
+      
+    }
+  }
+}//$?[End_of_model]$?
+
+namespace -;
+
+
+class HobbyDetectives
+{
+  position 50 30 109 45;
+}
