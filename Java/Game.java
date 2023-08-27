@@ -15,7 +15,7 @@ public class Game {
         new Character("Bert", "B", 1, 9), 
         new Character("Malina", "M", 9, 22), 
         new Character("Percy", "P", 22, 11)));
-    private List<Character> mofifiableCharacterList = new ArrayList<>(characters);
+    private List<Character> modifiableCharacterList = new ArrayList<>(characters);
     private Board board = new Board();
     private List<GameTile> usedGameTiles = new ArrayList<>();
     private List<String> currentGuess = new ArrayList<>();
@@ -27,7 +27,6 @@ public class Game {
     private boolean guessMade = false;
     private int refuteCount = 0;
     private int refuter = 0;
-    private TurnOrder invalidCharacter;
 
     private String winner = "Nobody";
 
@@ -38,12 +37,12 @@ public class Game {
         return this.playerCount;
     }
     
-    public List<Character> getMofifiableCharacterList(){
-        return mofifiableCharacterList;
+    public List<Character> getModifiableCharacterList(){
+        return modifiableCharacterList;
     }
     
-    public void removeFromMofifiableCharacterList(int i){
-        mofifiableCharacterList.remove(i);
+    public void removeFromModifiableCharacterList(int i){
+        modifiableCharacterList.remove(i);
     }
     
     public void setPlayerCount(int i) {
@@ -325,6 +324,7 @@ public class Game {
         }
 
         // forfeiting all remaining player moves
+        diceRolled = true;
         setDiceTotal(0);
 
         // determining if the player won (only if they made a solve attempt)
