@@ -6,91 +6,109 @@ import java.util.*;
 
 public class Gui extends JFrame {
     private Game game;
-
+    // the three key frames that lie on the game frame
+    private TextPanel textPanel;
+    private SidePanel sidebar;
+    private BottomPanel bottomBar;
+    private JPanel boardPanel;
+    
+    
     public Gui(Game game) {
-        super("Hobby Detectives");
-        this.game = game;
+    super("Hobby Detectives");
+    this.game = game;
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JMenuBar menuBar = new JMenuBar();
-        JMenu switchMenu = new JMenu("Switch Panels");
+    JMenuBar menuBar = new JMenuBar();
+    JMenu switchMenu = new JMenu("Switch Panels");
 
-        JMenuItem textItem = new JMenuItem("Text Panel");
+    JMenuItem textItem = new JMenuItem("Text Panel");
 
-        // get sidebar
-        SidePanel sidebar = sideWidget();
-        sidebar.setPreferredSize(new Dimension(160, 0));
+    // Create a JSplitPane for the sidebar and bottomBar
+    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    splitPane.setResizeWeight(1.0); // Sidebar takes all the space
 
-        TextPanel textPanel = textWidget();
+    sidebar = sideWidget();
+    sidebar.setPreferredSize(new Dimension(150, 0));
 
-        textItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    getContentPane().removeAll();
-                    getContentPane().setLayout(new BorderLayout()); // Reset the layout
+    bottomBar = bottomWidget();
+    bottomBar.setPreferredSize(new Dimension(0, 50));
 
-                    // Add the sidebar to the side
-                    getContentPane().add(sidebar, BorderLayout.EAST);
+    textPanel = textWidget();
 
-                    // Add the textPanel to the center
-                    getContentPane().add(textPanel, BorderLayout.CENTER);
+    textItem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            getContentPane().removeAll();
+            getContentPane().setLayout(new BorderLayout()); // Reset the layout
+            
+            getContentPane().add(splitPane, BorderLayout.CENTER);
+            getContentPane().add(sidebar, BorderLayout.EAST);        
+            
+            splitPane.setBottomComponent(bottomBar);
+            splitPane.setTopComponent(textPanel);
+            getContentPane().revalidate();
+            getContentPane().repaint();
+            pack();
+            setSize(600, 600);
+        }
+    });
 
-                    revalidate();
-                    repaint();
-                    setSize(500, 600);
+    switchMenu.add(textItem);
+    JMenuItem boardItem = new JMenuItem("Board Panel");
 
-                }
-            });
+    boardItem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            getContentPane().removeAll();
+            getContentPane().setLayout(new BorderLayout()); // Reset the layout
+            
+            getContentPane().add(boardPanel,BorderLayout.WEST);
+            getContentPane().add(sidebar, BorderLayout.EAST);   
+           
+            splitPane.setBottomComponent(bottomBar);
+            getContentPane().add(splitPane, BorderLayout.CENTER);
+            getContentPane().add(sidebar, BorderLayout.EAST);
+            
+            getContentPane().revalidate();
+            getContentPane().repaint();
+            pack();
+            setSize(600, 600);
+        }
+    });
 
-        switchMenu.add(textItem);
-        JMenuItem boardItem = new JMenuItem("Board Panel");
+    switchMenu.add(boardItem);
+    menuBar.add(switchMenu);
+    setJMenuBar(menuBar);
 
-        boardItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setSize(600, 600);
-                    getContentPane().removeAll();
-                    //add boardpannel
-                    //getContentPane().add(BoardPanel(), BorderLayout.CENTER);
+    // Set up the initial layout using the JSplitPane
+    splitPane.setTopComponent(textPanel);
+    splitPane.setBottomComponent(bottomBar);
 
-                    // Add the sidebar to the side
-                    getContentPane().add(sidebar, BorderLayout.EAST);
+    getContentPane().setLayout(new BorderLayout());
+    getContentPane().add(splitPane, BorderLayout.CENTER);
+    getContentPane().add(sidebar, BorderLayout.EAST);
 
-                    revalidate();
-                    repaint();
-                }
-            });
+    pack();
+    setSize(600, 600);
+    setVisible(true);
 
-        switchMenu.add(boardItem);
-        menuBar.add(switchMenu);
-        setJMenuBar(menuBar);
+    setPlayerCountPreset();
+}
 
-        //what the users see on start
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(textPanel, BorderLayout.CENTER);
-        getContentPane().add(sidebar, BorderLayout.EAST);
-
-        pack();
-        setSize(500,600);
-        setVisible(true);
-
-        setPlayerCountPreset();
-
-    }
 
     // PRESETS
 
     /**
-     * Clears the current contents of the game's main frame and replaces it with the given
-     * widget in the center of the frame
-     *
-     * @param widget The JPanel to be displayed in the center of the game frame
+     * Clears the current contents of the game's text box and adds to the sidebar with the given
+     * widget
+     * 
+     * @param widget The JPanel to be displayed in sidebar
      */
     private void setSingleWidgetPreset(JPanel widget) {
-        getContentPane().removeAll();
-        add(widget, BorderLayout.CENTER);
+        //etContentPane().removeAll();
+        bottomBar.clearPanel(bottomBar);
+        bottomBar.add(widget, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
@@ -120,10 +138,10 @@ public class Gui extends JFrame {
      * Switches the game interface to the player's turn menu
      */
     private void setPlayerTurnPreset() {
-        getContentPane().removeAll();
-        add(playerMoveOrGuessWidget(), BorderLayout.SOUTH);
-        add(boardWidget(), BorderLayout.WEST);
-        add(worksheetWidget(), BorderLayout.EAST);
+        //getContentPane().removeAll();
+        bottomBar.clearPanel(bottomBar);
+        bottomBar.add(playerMoveOrGuessWidget(), BorderLayout.CENTER);
+        boardPanel = boardWidget();
         revalidate();
         repaint();
     }
@@ -208,7 +226,7 @@ public class Gui extends JFrame {
         panel.add(instructionLabel);
         panel.add(playerCountSelect);
         panel.add(OKButton);
-
+        
         return panel;
     }
 
@@ -221,32 +239,65 @@ public class Gui extends JFrame {
         JLabel instructionLabel = new JLabel(String.format("Player %d, please enter your name:", game.getPlayerInitCount() + 1));
         JButton OKButton = new JButton("OK");
         JTextField insertNameTextField = new JTextField(10);
-
+        ArrayList<JRadioButton> radioButtons = new ArrayList<>();
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    game.addName(insertNameTextField.getText());
+                    Character selected = null;
+                    for(int i = 0; i<radioButtons.size();i++){
+                    if(radioButtons.get(i).isSelected()){
+                    selected = game.getMofifiableCharacterList().get(i);
+                    game.removeFromMofifiableCharacterList(i);
+                    }
+                    }
+                    if(selected != null){
+                    game.addPlayer(new Player(selected,new Worksheet(),insertNameTextField.getText(),true));
                     game.incrementPlayerInitCount();
+                    sidebar.clearPanel(sidebar);
                     if (game.getPlayerInitCount() < game.getPlayerCount()) {
                         setPlayerNamePreset();
                     } else {
                         game.setupGame();
                         setPassTabletPreset();
                     }
+                    }
                 }
             });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-
+        
         panel.add(instructionLabel);
         panel.add(insertNameTextField);
         panel.add(OKButton);
-
-        //TODO add character select here
+        
+        JPanel radioPanel = new JPanel();
+        
+        radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
+       
+        
+        for(Character c : game.getMofifiableCharacterList()){
+            JRadioButton radioButton = new JRadioButton(c.getName());
+            radioButtons.add(radioButton);
+            radioButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for(JRadioButton b : radioButtons){
+                        b.setSelected(false);
+                    }  
+                    radioButton.setSelected(true);
+                }
+            });
+            radioPanel.add(radioButton);
+        }
+        
+        sidebar.add(radioPanel, BorderLayout.WEST);
+         
+        
 
         return panel;
     }
+    
 
     /**
      * Checks whether the tablet has been passed to the next player
@@ -548,11 +599,15 @@ public class Gui extends JFrame {
     return panel;
     } */
 
+    
+
+    
     /**
      * Creates full board by creating a board object and then adding cells
      *
      * @return
      */
+    
     private JPanel boardWidget() {
         BoardPanel board = new BoardPanel();
         board.setLayout(new GridLayout(24, 24, 0, 0));
@@ -623,7 +678,7 @@ public class Gui extends JFrame {
             return panel;
         }
     }
-
+ 
     /**
      *  creates a text box that can be written to for user communication 
      */
@@ -663,7 +718,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     *  creates a text box that can be written to for user communication 
+     *  creates a Panel that store other pannels on the right hand side
      */
     public SidePanel sideWidget(){
         SidePanel side = new SidePanel();
@@ -688,6 +743,31 @@ public class Gui extends JFrame {
     }
     }
 
+    /**
+     *  creates a panel that can store other panels on the bottom of the screen 
+     */
+    public BottomPanel bottomWidget(){
+        BottomPanel bottom = new BottomPanel();
+        return bottom;
+    }
+    
+    class BottomPanel extends JPanel {
+        
+    public BottomPanel() {}
+
+    public void addPanel(JPanel adding, BorderLayout b) {
+        add(adding,b);
+        add(adding,b);
+        revalidate();
+        repaint();
+    }
+
+    public void clearPanel(JPanel clearing) {
+        clearing.removeAll();
+        clearing.revalidate();
+        clearing.repaint();
+    }
+    }
     
     /**
      * Shows the player's worksheet
