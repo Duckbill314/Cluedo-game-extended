@@ -10,6 +10,11 @@ public class Game {
     private List<Player> players = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
     private List<Weapon> weapons = new ArrayList<>();
+    private List<Character> characters = new ArrayList<>(Arrays.asList(
+        new Character("Lucilla", "L", 11, 1), 
+        new Character("Bert", "B", 1, 9), 
+        new Character("Malina", "M", 9, 22), 
+        new Character("Percy", "P", 22, 11)));
 
     private Board board = new Board();
     private List<GameTile> usedGameTiles = new ArrayList<>();
@@ -162,10 +167,10 @@ public class Game {
         }
 
         // Update the tiles that contain characters on the board
-        for (Player p : players) {
-            Tile t = board.getTile(p.getCharacter().getY(), p.getCharacter().getX());
+        for (Character c : characters) {
+            Tile t = board.getTile(c.getY(), c.getX());
             if (t instanceof GameTile) {
-                ((GameTile) t).setStored(p.getCharacter());
+                ((GameTile) t).setStored(c);
             }
         }
 
@@ -200,7 +205,10 @@ public class Game {
      * @param names The list of player names
      */
     private void assignCharacters(List<String> names) {
-        List<Character> availableCharacters = new ArrayList<>(Arrays.asList(new Character("Lucilla", "L", 11, 1), new Character("Bert", "B", 1, 9), new Character("Malina", "M", 9, 22), new Character("Percy", "P", 22, 11)));
+        List<Character> availableCharacters = new ArrayList<Character>();
+        for (Character c : characters) {
+            availableCharacters.add(c);
+        }
         
         // Creates the player objects and randomly assigns them a character
         for (int i = 0; i < playerCount; i++) {
@@ -270,7 +278,10 @@ public class Game {
      * Creates the game card instances
      */
     private void initialiseCards() {
-        String[][] cardData = {{"Lucilla", "Character"}, {"Bert", "Character"}, {"Malina", "Character"}, {"Percy", "Character"}, {"Broom", "Weapon"}, {"Scissors", "Weapon"}, {"Knife", "Weapon"}, {"Shovel", "Weapon"}, {"iPad", "Weapon"}, {"Haunted House", "Estate"}, {"Manic Manor", "Estate"}, {"Visitation Villa", "Estate"}, {"Calamity Castle", "Estate"}, {"Peril Palace", "Estate"}};
+        String[][] cardData = {{
+            "Lucilla", "Character"}, {"Bert", "Character"}, {"Malina", "Character"}, {"Percy", "Character"}, 
+            {"Broom", "Weapon"}, {"Scissors", "Weapon"}, {"Knife", "Weapon"}, {"Shovel", "Weapon"}, {"iPad", "Weapon"}, 
+            {"Haunted House", "Estate"}, {"Manic Manor", "Estate"}, {"Visitation Villa", "Estate"}, {"Calamity Castle", "Estate"}, {"Peril Palace", "Estate"}};
 
         for (String[] data : cardData) {
             cards.add(new Card(false, null, data[0], data[1]));
@@ -338,9 +349,9 @@ public class Game {
         currentGuess.add(weapon);
 
         // teleport the guessed character to the current estate
-        for (Player player : players) {
-            if (player.getCharacter().getName().equals(character)) {
-                teleportItem(player.getCharacter(), p.getCharacter().getEstate());
+        for (Character c : characters) {
+            if (c.getName().equals(character)) {
+                teleportItem(c, p.getCharacter().getEstate());
             }              
         }
 
@@ -431,9 +442,12 @@ public class Game {
     private void removeItemFromEstate(Item item, Estate estate) {
         estate.removeItem(item);
         estate.updateContents();
+        item.setEstate(null);
     }
 
     private void teleportItem(Item item, Estate toEstate) {
+        GameTile current = (GameTile) board.getTile(item.getY(), item.getX());
+        current.clearStored();
         Estate fromEstate = item.getEstate();
         if(fromEstate != null){
             removeItemFromEstate(item, fromEstate);
