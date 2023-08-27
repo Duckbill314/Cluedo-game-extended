@@ -241,11 +241,7 @@ public class Board {
             return false;
         }
 
-        if (((GameTile)target).getStored() != null) {
-            return false;
-        }
-        
-        return true;
+        return ((GameTile) target).getStored().getName().equals("empty");
     }
 
     public List<Estate> getEstates() {

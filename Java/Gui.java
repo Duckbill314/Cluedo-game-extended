@@ -121,24 +121,6 @@ public class Gui extends JFrame {
 
     // WIDGETS
 
-    private JPanel mapWidget() {
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                int side = 100;
-
-                int x = (getWidth() - side) / 2;
-                int y = (getHeight() - side) / 2;
-
-                g.setColor(Color.BLUE);
-                g.fillRect(x, y, side, side);
-            }
-        };
-        return panel;
-    }
-
     /**
      * Creates and returns a JPanel for selecting the number of players
      *
@@ -536,7 +518,7 @@ public class Gui extends JFrame {
         return board;
     }
 
-    static class Board extends JPanel {
+    class Board extends JPanel {
         private final int squareSize = 50;
         private final Color wallTileColor = Color.BLACK;
         private final Color tileBorderColor = Color.BLACK;
@@ -563,7 +545,7 @@ public class Gui extends JFrame {
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
-                    g.setColor(Color.GRAY);
+                    g.setColor(gameTileColor);
                     g.fillRect(0, 0, squareSize, squareSize);
 
                     if (!letter.isEmpty()) {

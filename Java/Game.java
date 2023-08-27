@@ -6,14 +6,14 @@ public class Game {
 
     private int playerCount;
     private int playerInitCount = 0;
-    private List<String> names = new ArrayList<String>();
+    private List<String> names = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
     private List<Weapon> weapons = new ArrayList<>();
 
     private Board board = new Board();
     private List<GameTile> usedGameTiles = new ArrayList<>();
-    private List<String> currentGuess = new ArrayList<String>();
+    private List<String> currentGuess = new ArrayList<>();
 
     private Player turn = new Player(null,null,null,false);
     private TurnOrder currentTurn = TurnOrder.Lucilla;
@@ -127,19 +127,7 @@ public class Game {
         String nullCharacter = "";
         List<String> orderedCharacters = Arrays.asList("Lucilla","Bert","Malina","Percy");
         if(playerCount == 3){
-            List<String> remainingCharacters = new ArrayList<>();
-            remainingCharacters.add("Lucilla");
-            remainingCharacters.add("Bert");
-            remainingCharacters.add("Malina");
-            remainingCharacters.add("Percy");
-
-            for(int i = 0; i<3;i++){
-                for(Player p : players){
-                    if(p.getCharacter().getName().equals(orderedCharacters.get(i))){
-                        remainingCharacters.remove(orderedCharacters.get(i));
-                    }
-                }
-            }
+            List<String> remainingCharacters = setPlayerString(orderedCharacters);
             nullCharacter = remainingCharacters.get(0);
         }
 
@@ -162,7 +150,7 @@ public class Game {
             currentTurn = TurnOrder.values()[startingPlayerIndex];
         } while (currentTurn == invalidCharacter);
         for (Player p : players) {
-            if (p.getCharacter().getName() == currentTurn.name()) {
+            if (Objects.equals(p.getCharacter().getName(), currentTurn.name())) {
                 turn = p;
             }
         }
@@ -182,6 +170,23 @@ public class Game {
         initialiseCards();
         pickMurderCards();
         distributeCardsToPlayers();
+    }
+
+    private List<String> setPlayerString(List<String> orderedCharacters) {
+        List<String> remainingCharacters = new ArrayList<>();
+        remainingCharacters.add("Lucilla");
+        remainingCharacters.add("Bert");
+        remainingCharacters.add("Malina");
+        remainingCharacters.add("Percy");
+
+        for(int i = 0; i<3;i++){
+            for(Player p : players){
+                if(p.getCharacter().getName().equals(orderedCharacters.get(i))){
+                    remainingCharacters.remove(orderedCharacters.get(i));
+                }
+            }
+        }
+        return remainingCharacters;
     }
 
     /**
@@ -364,21 +369,21 @@ public class Game {
             for (Card c : cards) {
                 if (c.getIsMurder()) {
                     switch (c.getType()) {
-                        case "Estate":
+                        case "Estate" -> {
                             if (!c.getName().equals(currentGuess.get(0))) {
                                 win = false;
                             }
-                            break;
-                        case "Character":
+                        }
+                        case "Character" -> {
                             if (!c.getName().equals(currentGuess.get(1))) {
                                 win = false;
                             }
-                            break;
-                        case "Weapon":
+                        }
+                        case "Weapon" -> {
                             if (!c.getName().equals(currentGuess.get(2))) {
                                 win = false;
                             }
-                            break;
+                        }
                     }
                 }
             }
@@ -408,8 +413,7 @@ public class Game {
     public int rollDice() {
         double max = 6;
         double min = 1;
-        int dice = (int) (Math.random() * (max - min + 1) + min); // implement random number 1-6 to simulate dice roll
-        return dice;
+        return (int) (Math.random() * (max - min + 1) + min);
     }
 
     private void addItemToEstate(Item item, Estate estate) {
@@ -477,25 +481,24 @@ public class Game {
         // Find coordinates of next direction, or which exit to take
         int newY = character.getY();
         int newX = character.getX();
-        int exit = 0;
-        switch (direction) {
-            case Up:
+        int exit = switch (direction) {
+            case Up -> {
                 newY -= 1;
-                exit = 0;
-                break;
-            case Down:
+                yield 0;
+            }
+            case Down -> {
                 newY += 1;
-                exit = 2;
-                break;
-            case Left:
+                yield 2;
+            }
+            case Left -> {
                 newX -= 1;
-                exit = 3;
-                break;
-            case Right:
+                yield 3;
+            }
+            case Right -> {
                 newX += 1;
-                exit = 1;
-                break;
-        }
+                yield 1;
+            }
+        };
 
         // If in estate, leave
         if (character.getEstate() != null) {
@@ -521,24 +524,24 @@ public class Game {
             if(index == players.size()){
                 index = 0;
             }
-            switch (index) {
-                case 1:
-                    currentTurn = TurnOrder.Bert;
-                    turn = players.get(index);
-                    break;
-                case 2:
-                    currentTurn = TurnOrder.Malina;
-                    turn = players.get(index);
-                    break;
-                case 3:
-                    currentTurn = TurnOrder.Percy;
-                    turn = players.get(index);
-                    break;
-                case 0:
-                    currentTurn = TurnOrder.Lucilla;
-                    turn = players.get(index);
-                    break;
+        switch (index) {
+            case 1 -> {
+                currentTurn = TurnOrder.Bert;
+                turn = players.get(index);
             }
+            case 2 -> {
+                currentTurn = TurnOrder.Malina;
+                turn = players.get(index);
+            }
+            case 3 -> {
+                currentTurn = TurnOrder.Percy;
+                turn = players.get(index);
+            }
+            case 0 -> {
+                currentTurn = TurnOrder.Lucilla;
+                turn = players.get(index);
+            }
+        }
     }
 
 
