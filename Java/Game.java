@@ -10,6 +10,7 @@ import java.util.*;
  * 
  * @author William Huang
  * @author James Goode
+ * @author Finley Neilson
  */
 public class Game {
     // Local variables for game logic

@@ -3,6 +3,7 @@
  * It extends the Tile class and has the ability to store an Item.
  * 
  * @author William Huang
+ * @author Finley Neilson
  */
 public class GameTile extends Tile {
 

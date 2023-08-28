@@ -3,6 +3,7 @@
  * It includes information about its coordinates and an output string for display purposes.
  *
  * @author William Huang
+ * @author Finley Neilson
  */
 public class Tile {
 
