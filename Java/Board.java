@@ -7,6 +7,7 @@ import java.util.*;
  *
  * @author Mazen Khallaf
  * @author William Huang
+ * @author James Goode
  */
 public class Board {
     /**
