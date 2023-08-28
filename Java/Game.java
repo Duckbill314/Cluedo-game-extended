@@ -132,6 +132,19 @@ public class Game {
         }
         this.usedGameTiles.clear();
     }
+    public String findFullName(String shortName){
+        for(Character c : characters){
+            if(shortName.equals(c.getDisplayIcon())){
+                return c.getName(); 
+            }
+        }
+        for(Weapon w : weapons){
+            if(shortName.equals(w.getDisplayIcon())){
+                return w.getName(); 
+            }
+        }
+        return null;
+    }
 
     /**
      * Sets up the game by initializing the number of players, collecting player names,

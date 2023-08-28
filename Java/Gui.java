@@ -266,7 +266,10 @@ public class Gui extends JFrame {
                             game.removeFromModifiableCharacterList(i);
                         }
                     }
-                    if (selected != null) {
+                    if (selected == null) {
+                        errorMessagePopup();
+                    }
+                    else {
                         game.addPlayer(new Player(selected, new Worksheet(), insertNameTextField.getText(), true));
                         game.incrementPlayerInitCount();
                         sidebar.clearPanel();
@@ -376,7 +379,8 @@ public class Gui extends JFrame {
                         } else {
                             setMovementPreset();
                         }
-                    } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                    } else {
+                        errorMessagePopup();
                         setPlayerTurnPreset();
                     }
                 }
@@ -385,7 +389,8 @@ public class Gui extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     if (game.getCurrentPlayer().getIsEligible() && game.getCurrentPlayer().getCharacter().isInEstate() && !game.getGuessMade()) {
                         setGuessPreset();
-                    } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                    } else {
+                        errorMessagePopup();
                         setPlayerTurnPreset();
                     }
                 }
@@ -461,6 +466,8 @@ public class Gui extends JFrame {
                     if (game.getDiceTotal() > 0) {
                         int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Up);
                         game.decrementDiceTotal(i);
+                    } else {
+                        errorMessagePopup();
                     }
                     setMovementPreset();
                 }
@@ -470,6 +477,8 @@ public class Gui extends JFrame {
                     if (game.getDiceTotal() > 0) {
                         int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Right);
                         game.decrementDiceTotal(i);
+                    } else {
+                        errorMessagePopup();
                     }
                     setMovementPreset();
                 }
@@ -479,6 +488,8 @@ public class Gui extends JFrame {
                     if (game.getDiceTotal() > 0) {
                         int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Down);
                         game.decrementDiceTotal(i);
+                    } else {
+                        errorMessagePopup();
                     }
                     setMovementPreset();
                 }
@@ -488,6 +499,8 @@ public class Gui extends JFrame {
                     if (game.getDiceTotal() > 0) {
                         int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Left);
                         game.decrementDiceTotal(i);
+                    } else {
+                        errorMessagePopup();
                     }
                     setMovementPreset();
                 }
@@ -675,23 +688,6 @@ public class Gui extends JFrame {
     public record CPosition(int x, int y) {}
 
     /**
-     * Shows the player's worksheet
-     *
-     * @return
-     */
-    private JPanel worksheetWidget() {
-        String worksheetString = game.getCurrentPlayer().getWorksheet().toString().replace("\n", "<br/>");
-        worksheetString = "<html>" + worksheetString + "</html>";
-        JLabel worksheetLabel = new JLabel(worksheetString);
-
-        JPanel panel = new JPanel();
-
-        panel.add(worksheetLabel);
-
-        return panel;
-    }
-
-    /**
      * Allows a player to select which refuteable card to use to refute.
      * If they make a refutation, it goes back to the guesser, to end their turn.
      * If they cannot make a refutation, it is passed around to all the other players.
@@ -833,16 +829,16 @@ public class Gui extends JFrame {
 
                             if(distance<20){
 
-                                JFrame frame = new JFrame("Joke Dialog Example");
+                                JFrame frame = new JFrame();
                                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
                                 JDialog dialog = new JDialog(frame, "Item Info", true);
 
                                 String shortenedName = entry.getKey();
                                 
-                                JLabel jokeLabel = new JLabel(game.findFullName(shortenedName));
+                                JLabel label = new JLabel(game.findFullName(shortenedName));
                                 
-                                jokeLabel.setHorizontalAlignment(JLabel.CENTER);
+                                label.setHorizontalAlignment(JLabel.CENTER);
 
                                 JButton exitButton = new JButton("Exit");
                                 exitButton.addActionListener(new ActionListener() {
@@ -853,7 +849,7 @@ public class Gui extends JFrame {
                                         }
                                     });
                                 JPanel panel = new JPanel(new BorderLayout());
-                                panel.add(jokeLabel, BorderLayout.CENTER);
+                                panel.add(label, BorderLayout.CENTER);
                                 panel.add(exitButton, BorderLayout.SOUTH);
 
                                 dialog.getContentPane().add(panel);
@@ -997,6 +993,10 @@ public class Gui extends JFrame {
         public ArrayList<JRadioButton> getRadioButtons() {
             return this.radioButtons;
         }
+    }
+
+    private void errorMessagePopup() {
+        JOptionPane.showMessageDialog(this, "Invalid action", "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
