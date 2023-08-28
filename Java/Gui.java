@@ -815,8 +815,7 @@ public class Gui extends JFrame {
             addMouseMotionListener(new MouseMotionAdapter() {
                     @Override
                     public void mouseMoved(MouseEvent e) {
-                        System. out. print('\u000C');
-
+                      
                         int mouseX = e.getX();
                         int mouseY = e.getY();
 
