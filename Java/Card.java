@@ -3,6 +3,7 @@
  * It can be a murder card or a regular card, and can be either an estate card, a weapon card, or a character card.
  *
  * @author William Huang
+ * @author James Goode
  */
 public class Card {
 
