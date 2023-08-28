@@ -639,12 +639,12 @@ public class Gui extends JFrame {
                 Tile tile = game.getBoard().getTile(row, col);
 
                 if (tile instanceof WallTile) {
-                    board.add(board.wallTile(row, col));
+                    board.add(board.wallTile());
                 } else if (tile instanceof GameTile) {
                     String displayIcon = ((GameTile) tile).getStored().getDisplayIcon();
                     board.add(board.gameTile(row, col, displayIcon));
                 } else {
-                    board.add(board.enteranceTile(row, col));
+                    board.add(board.entranceTile());
                 }
             }
         }
@@ -656,6 +656,7 @@ public class Gui extends JFrame {
      *
      * @author Finley Neilson
      * @author William Huang
+     * @author Mazen Khallaf
      * @author James Goode
      */
     class BoardPanel extends JPanel {
@@ -668,11 +669,9 @@ public class Gui extends JFrame {
         /**
          * Create a JPanel for a wall tile.
          *
-         * @param row The row index of the tile.
-         * @param col The column index of the tile.
          * @return The JPanel representing a wall tile.
          */
-        public JPanel wallTile(int row, int col) {
+        public JPanel wallTile() {
             JPanel panel = new JPanel() {
                     @Override
                     protected void paintComponent(Graphics g) {
@@ -730,11 +729,9 @@ public class Gui extends JFrame {
         /**
          * Create a JPanel for an entrance tile.
          *
-         * @param row The row index of the tile.
-         * @param col The column index of the tile.
          * @return The JPanel representing an entrance tile.
          */
-        public JPanel enteranceTile(int row, int col) {
+        public JPanel entranceTile() {
             JPanel panel = new JPanel() {
                     @Override
                     protected void paintComponent(Graphics g) {
@@ -883,7 +880,6 @@ public class Gui extends JFrame {
          */
         public void clearText() {
             displayTextArea.setText("");
-            ;
         }
     }
 
@@ -1036,20 +1032,9 @@ public class Gui extends JFrame {
      * JPanel class for managing the right-hand sidebar of the GUI.
      *
      * @author James Goode
+     * @author Mazen Khallaf
      */
     class SidePanel extends JPanel {
-
-        /**
-         * Adds a JPanel to the sidebar.
-         * 
-         * @param adding the JPanel being added
-         * @param b the BorderLayout position used
-         */
-        public void addPanel(JPanel adding, BorderLayout b) {
-            add(adding, b);
-            revalidate();
-            repaint();
-        }
 
         /**
          * Clears the sidebar.
@@ -1072,20 +1057,9 @@ public class Gui extends JFrame {
      * JPanel class for managing the bottom section of the GUI.
      *
      * @author James Goode
+     * @author Mazen Khallaf
      */
     class BottomPanel extends JPanel {
-        /**
-         * Adds a JPanel to the bottom bar.
-         * 
-         * @param adding the JPanel being added
-         * @param b the BorderLayout position used
-         */
-        public void addPanel(JPanel adding, BorderLayout b) {
-            add(adding, b);
-            revalidate();
-            repaint();
-        }
-
         /**
          * Clears the bottom bar.
          */

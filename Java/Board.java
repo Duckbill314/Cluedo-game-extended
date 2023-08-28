@@ -244,24 +244,6 @@ public class Board {
     }
 
     /**
-     * Returns a string representation of the board.
-     *
-     * @return A string containing the visual representation of the game board.
-     */
-    public String draw() {
-        String res = "";
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                res += BORDER;
-                res += board[row][col].draw();
-            }
-            res += BORDER;
-            res += "\n";
-        }
-        return res;
-    }
-
-    /**
      * Checks if the provided coordinates are within the valid bounds of the game board.
      *
      * @param y The row index.
@@ -285,26 +267,6 @@ public class Board {
             return null; // Temporary solution for now
         }
     }
-
-    /**
-     * Turns off grid lines (borders) on the board.
-     * This can be used to improve the visibility of player positions.
-     */
-    public void gridOff() {
-        BORDER = " ";
-    }
-
-    /**
-     * Turns on grid lines (borders) on the board.
-     */
-    public void gridOn() {
-        if (BORDER.equals("|")) {
-            gridOff();
-        } else {
-            BORDER = "|";
-        }
-    }
-
 
     /**
      * Checks if a move to the specified position is safe (i.e. not occupied by a wall, gray-space, or a player).

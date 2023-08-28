@@ -10,6 +10,7 @@ import java.util.*;
  * 
  * @author William Huang
  * @author James Goode
+ * @author Mazen Khallaf
  * @author Finley Neilson
  */
 public class Game {
@@ -65,12 +66,6 @@ public class Game {
     public void incrementPlayerInitCount() {
         this.playerInitCount++;
     }
-    public List<String> getNames() {
-        return this.names;
-    }
-    public void addName(String name) {
-        this.names.add(name);
-    }
     public List<Player> getPlayers() {
         return this.players;
     }
@@ -80,20 +75,8 @@ public class Game {
     public List<Card> getCards() {
         return this.cards;
     }
-    public void addCard(Card card) {
-        this.cards.add(card);
-    }
-    public List<Weapon> getWeapons() {
-        return this.weapons;
-    }
-    public void addWeapon(Weapon weapon) {
-        this.weapons.add(weapon);
-    }
     public Board getBoard() {
         return this.board;
-    }
-    public List<String> getCurrentGuess() {
-        return this.currentGuess;
     }
     public Player getCurrentPlayer() {
         return this.turn;
@@ -506,7 +489,7 @@ public class Game {
      * Tiles can occur.
      * 
      * @param character the character being moved
-     * @param estate the estate being moved out of
+     * @param exit the estate exit the character will leave from
      * @return 1 if the movement successfully occurred, 0 otherwise
      */
     public int moveCharOutOfEstate(Character character, EntranceTile exit) {
@@ -553,7 +536,7 @@ public class Game {
      * the Tiles immediately adjacent to the character.
      * 
      * @param character the character being moved
-     * @param directionthe direction being moved in
+     * @param direction the direction being moved in
      * 
      * @return 1 if the movement successfully occurred, 0 otherwise
      */

@@ -5,6 +5,7 @@ import java.util.*;
  *
  * @author William Huang
  * @author James Goode
+ * @author Mazen Khallaf
  */
 public class Player {
 
@@ -70,15 +71,6 @@ public class Player {
     return true;
   }
 
-  /**
-   * Gets a card from the player's hand at the specified index.
-   *
-   * @param index The index of the card to retrieve.
-   * @return The card at the specified index.
-   */
-  public Card getCard(int index) {
-    return cards.get(index);
-  }
 
   /**
    * Gets an array of all the cards in the player's hand.
@@ -87,16 +79,6 @@ public class Player {
    */
   public Card[] getCards() {
     return cards.toArray(new Card[cards.size()]);
-  }
-
-  /**
-   * Finds the index of a specific card in the player's hand.
-   *
-   * @param aCard The card to search for.
-   * @return The index of the card if found, or -1 if not found.
-   */
-  public int indexOfCard(Card aCard) {
-    return cards.indexOf(aCard);
   }
 
   /**
