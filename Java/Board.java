@@ -7,7 +7,6 @@ import java.util.*;
  *
  * @author Mazen Khallaf
  * @author William Huang
- * @version // TODO
  */
 public class Board {
     /**
@@ -269,21 +268,6 @@ public class Board {
             res += "\n";
         }
         return res;
-    }
-
-    /**
-     * Sets the tile at the specified position.
-     *
-     * @param y     The row index.
-     * @param x     The column index.
-     * @param tile  The tile to set.
-     */
-    public void setTile(int y, int x, Tile tile) {
-        if (isValidPosition(y, x)) {
-            board[y][x] = tile;
-        } else {
-            // TODO Handle an out-of-bounds error.
-        }
     }
 
     /**
