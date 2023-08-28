@@ -827,7 +827,7 @@ public class Gui extends JFrame {
 
                             double distance = Math.hypot(ac, cb);
 
-                            if(distance<20){
+                            if((distance<20) && (!textOrBoardPanel)){
 
                                 JFrame frame = new JFrame();
                                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
