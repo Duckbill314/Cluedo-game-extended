@@ -1,22 +1,31 @@
 import java.util.*;
 
+/**
+ * The `Board` class represents the game board for Hobby Detective.
+ * It contains methods for initializing the board, creating estates,
+ * managing tiles and estates, and checking the safety of moves.
+ */
 public class Board {
     private final int ROWS = 24;
     private final int COLS = 24;
     private String BORDER = "|";
-
-    Tile[][] board = new Tile[ROWS][COLS];
+    private Tile[][] board = new Tile[ROWS][COLS];
     private List<Estate> estates = new ArrayList<Estate>();
 
+    /**
+     * Constructor for the Board class. Initializes the game board and estates.
+     */
     public Board() {
         buildGameSpace();
 
+        // Create and initialize estates
         estates.add(buildEstate("Haunted House"));
         estates.add(buildEstate("Calamity Castle"));
         estates.add(buildEstate("Manic Manor"));
         estates.add(buildEstate("Peril Palace"));
         estates.add(buildEstate("Visitation Villa"));
 
+        // Build estate structures on the board
         buildSquareEstate(2, 2, estates.get(0));
         buildSquareEstate(17, 2, estates.get(1));
         buildSquareEstate(2, 17, estates.get(2));
@@ -24,15 +33,17 @@ public class Board {
 
         buildRectangleEstate(10, 9, estates.get(4));
 
+        // Build entrances and grey areas
         buildEntrances();
-
         buildGreyArea(5, 11);
         buildGreyArea(11, 5);
         buildGreyArea(11, 17);
         buildGreyArea(17, 11);
-
     }
 
+    /**
+     * Initializes the game board by filling it with GameTile objects.
+     */
     private void buildGameSpace() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -41,10 +52,24 @@ public class Board {
         }
     }
 
+    /**
+     * Creates and returns an estate with the given name.
+     *
+     * @param name The name of the estate.
+     * @return An Estate object with the specified name.
+     */
     private Estate buildEstate(String name) {
         return new Estate(name);
     }
 
+    /**
+     * Builds a square-shaped estate on the board starting at the specified coordinates.
+     * This method also adds the inside tiles to the estate.
+     *
+     * @param y      The starting row index.
+     * @param x      The starting column index.
+     * @param estate The Estate object to which the tiles belong.
+     */
     private void buildSquareEstate(int y, int x, Estate estate) {
         //build column
         for (int i = y; i < y + 5; i++) {
@@ -70,6 +95,14 @@ public class Board {
         }
     }
 
+    /**
+     * Builds a rectangle-shaped estate on the board starting at the specified coordinates.
+     * This method also adds the inside tiles to the estate.
+     *
+     * @param y      The starting row index.
+     * @param x      The starting column index.
+     * @param estate The Estate object to which the tiles belong.
+     */
     private void buildRectangleEstate(int y, int x, Estate estate) {
         //build column
         for (int i = y; i < y + 4; i++) {
@@ -163,6 +196,12 @@ public class Board {
         estate.addEntrance(entrance4);
     }
 
+    /**
+     * Builds a grey area on the board starting at the specified coordinates.
+     *
+     * @param y The starting row index.
+     * @param x The starting column index.
+     */
     private void buildGreyArea(int y, int x) {
         for (int i = y; i <= y + 1; i++) {
             for (int j = x; j <= x + 1; j++) {
@@ -172,7 +211,9 @@ public class Board {
     }
 
     /**
-     * Returns a string representation of the board
+     * Returns a string representation of the board.
+     *
+     * @return A string containing the visual representation of the game board.
      */
     public String draw() {
         String res = "";
@@ -188,32 +229,44 @@ public class Board {
     }
 
     /**
-     * Sets tile at pos x,y
+     * Sets the tile at the specified position.
+     *
+     * @param y     The row index.
+     * @param x     The column index.
+     * @param tile  The tile to set.
      */
     public void setTile(int y, int x, Tile tile) {
         board[y][x] = tile;
     }
 
     /**
-     * Returns tile at pos x,y
+     * Returns the tile at the specified position.
+     *
+     * @param y     The row index.
+     * @param x     The column index.
+     * @return      The tile at the specified position.
      */
     public Tile getTile(int y, int x) {
         return board[y][x];
     }
 
+    /**
+     * Deletes the current game board by initializing a new one.
+     */
     public void deleteBoard() {
         board = new Tile[ROWS][COLS];
     }
 
     /**
-     * Turns every border on the board invisible so players can get a better grasp of their respective positions.
+     * Turns off grid lines (borders) on the board.
+     * This can be used to improve the visibility of player positions.
      */
     public void gridOff() {
         BORDER = " ";
     }
 
     /**
-     * Turns every border on the board back on
+     * Turns on grid lines (borders) on the board.
      */
     public void gridOn() {
         if (BORDER.equals("|")) {
@@ -223,8 +276,13 @@ public class Board {
         }
     }
 
+
     /**
-     * makes sure that the value in board at x and y is not occupied by a wall or grayspace or player
+     * Checks if a move to the specified position is safe (i.e. not occupied by a wall, greyspace, or a player).
+     *
+     * @param y The row index.
+     * @param x The column index.
+     * @return  True if the move is safe; otherwise, false.
      */
     public boolean isSafeMove(int y, int x) {
         if (x > 23 || x < 0 || y > 23 || y < 0) {
@@ -244,6 +302,11 @@ public class Board {
         return ((GameTile) target).getStored().getName().equals("empty");
     }
 
+    /**
+     * Returns a list of estates on the board.
+     *
+     * @return A list of Estate objects representing the estates on the board.
+     */
     public List<Estate> getEstates() {
         return estates;
     }
