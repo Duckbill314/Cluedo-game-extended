@@ -1,8 +1,8 @@
 /**
- * The `WallTile` class represents a wall tile in a game, which blocks movement.
- * It extends the `Tile` class and sets the output to "X" to visually represent a wall.
+ * The WallTile class represents a wall tile in a game, which blocks movement.
+ * It extends the Tile class and sets the output to "X" to visually represent a wall.
  *
- * @author William Huang
+ * @author Finley Neilson
  */
 public class WallTile extends Tile {
 

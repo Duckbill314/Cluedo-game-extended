@@ -1,5 +1,5 @@
 /**
- * The `Tile` class represents a basic tile in a game.
+ * The Tile class represents a basic tile in a game.
  * It includes information about its coordinates and an output string for display purposes.
  *
  * @author William Huang

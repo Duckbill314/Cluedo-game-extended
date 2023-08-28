@@ -1,6 +1,7 @@
 /**
- * The `GameTile` class represents a tile in the game that can hold an item.
- * It extends the `Tile` class and has the ability to store an `Item`.
+ * The GameTile class represents a tile in the game that can hold an item.
+ * It extends the Tile class and has the ability to store an Item.
+ * 
  * @author William Huang
  */
 public class GameTile extends Tile {

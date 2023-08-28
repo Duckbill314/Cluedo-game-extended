@@ -1,11 +1,26 @@
 import java.util.*;
 
+/**
+ * The Estate class for HobbyDetectives.
+ * It is an abstract logical representation of Tiles.
+ * It contains a List of GameTimes, which comprise the domain of the Estate.
+ * Items such as Characters and Weapons can be stored in these GameTiles.
+ * It also contains a List of EntranceTiles, which mark the entrances of the Estate.
+ * When a player attempts to enter or exit the Estate, it will be through these EntranceTiles.
+ * 
+ * @author William Huang
+ */
 public class Estate {
     private String name;
     private List<Item> items = new ArrayList<Item>();
     private List<GameTile> estateTiles = new ArrayList<GameTile>();
     private List<EntranceTile> EntranceTiles = new ArrayList<>();
 
+    /**
+     * Constructor for the Estate class.
+     * 
+     * @param aName the name of the estate
+     */
     public Estate(String aName) {
         name = aName;
     }

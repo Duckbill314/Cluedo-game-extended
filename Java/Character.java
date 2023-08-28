@@ -1,6 +1,8 @@
 /**
- * The `Character` class represents a character in a game.
- * It extends the `Item` class, inheriting properties such as name, display icon, and position.
+ * The Character class represents a character in a game.
+ * It extends the Item class, inheriting properties such as name, display icon, and position.
+ * 
+ * @author William Huang
  */
 public class Character extends Item {
 

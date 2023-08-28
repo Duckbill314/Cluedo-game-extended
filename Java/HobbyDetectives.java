@@ -1,7 +1,7 @@
 /**
- * The `HobbyDetectives` class serves as the entry point of the Hobby Detectives game.
- * It initializes the game logic by creating an instance of the `Game` class
- * and starts the graphical user interface (GUI) by creating an instance of the `Gui` class.
+ * The HobbyDetectives class serves as the entry point of the Hobby Detectives game.
+ * It initializes the game logic by creating an instance of the Game class
+ * and starts the graphical user interface (GUI) by creating an instance of the Gui class.
  *
  * @author William Huang
  */

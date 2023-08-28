@@ -1,7 +1,7 @@
 import java.util.*;
 
 /**
- * The `Board` class represents the game board for Hobby Detective.
+ * The Board class represents the game board for Hobby Detective.
  * It contains methods for initializing the board, creating estates,
  * managing tiles and estates, and checking the safety of moves.
  *
@@ -81,17 +81,6 @@ public class Board {
         buildSquareEstate(2, 17, estates.get(2));
         buildSquareEstate(17, 17, estates.get(3));
         buildRectangleEstate(10, 9, estates.get(4));
-    }
-
-
-    /**
-     * Creates and returns an estate with the given name.
-     *
-     * @param name The name of the estate.
-     * @return An Estate object with the specified name.
-     */
-    private Estate buildEstate(String name) {
-        return new Estate(name);
     }
 
     /**
@@ -291,7 +280,6 @@ public class Board {
         if (isValidPosition(y, x)) {
             return board[y][x];
         } else {
-            // TODO Handle an out-of-bounds error.
             return null; // Temporary solution for now
         }
     }

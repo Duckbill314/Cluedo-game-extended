@@ -1,8 +1,8 @@
 import java.util.*;
 
 /**
- * The `Worksheet` class represents a worksheet in the game, which holds known information for a given player.
- * It contains two lists: `cards` and `shownCards`, and provides methods for adding cards to these lists
+ * The Worksheet class represents a worksheet in the game, which holds known information for a given player.
+ * It contains two lists: cards and shownCards, and provides methods for adding cards to these lists
  * and displaying the contents of the worksheet.
  *
  * @author William Huang

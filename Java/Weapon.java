@@ -1,6 +1,7 @@
 /**
- * The `Weapon` class represents a weapon item in the game.
- * It extends the `Item` class, inheriting properties such as name, display icon, position, and estate association.
+ * The Weapon class represents a weapon item in the game.
+ * It extends the Item class, inheriting properties such as name, display icon, position, and estate association.
+ * 
  * @author William Huang
  */
 public class Weapon extends Item {

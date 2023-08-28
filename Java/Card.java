@@ -1,5 +1,5 @@
 /**
- * The `Card` class represents a card in Hobby Detective.
+ * The Card class represents a card in Hobby Detective.
  * It can be a murder card or a regular card, and can be either an estate card, a weapon card, or a character card.
  *
  * @author William Huang

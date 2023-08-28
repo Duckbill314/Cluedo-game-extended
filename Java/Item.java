@@ -1,6 +1,8 @@
 /**
- * The `Item` class represents an item in a game, which can be placed on the game board.
+ * The Item class represents an item in a game, which can be placed on the game board.
  * It includes properties such as name, display icon, position, and an associated estate.
+ * 
+ * @author William Huang
  */
 public class Item {
 

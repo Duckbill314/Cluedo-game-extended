@@ -1,6 +1,17 @@
 import java.util.*;
 
+/**
+ * The model for a game of HobbyDetectives, and central hub of all game activity.
+ * Contains all the necessary functions for game actions.
+ * Intended for use by the Gui class, wherein many of the Game methods are
+ * used in the Listeners, allowing for user control through the GUI.
+ * Also contains all the necessary flags, counters, and other
+ * variables for the game logic.
+ * 
+ * @author William Huang
+ */
 public class Game {
+    // Local variables for game logic
     public enum TurnOrder {Lucilla, Bert, Malina, Percy}
     public enum Direction {Up, Right, Down, Left}
 
@@ -30,9 +41,7 @@ public class Game {
 
     private String winner = "Nobody";
 
-    public Game() {}
-
-    // GETTERS AND SETTERS/ADDERS
+    // Getters and setters/adders
     public int getPlayerCount() {
         return this.playerCount;
     }
@@ -148,7 +157,7 @@ public class Game {
 
     /**
      * Sets up the game by initializing the number of players, collecting player names,
-     * determining starting player, allocating roles, and starting the game
+     * determining starting player, allocating roles, and starting the game.
      */
     public void setupGame() {
        
@@ -228,7 +237,7 @@ public class Game {
     }
 
     /**
-     * Create and distribute all the weapons to random estates
+     * Create and distribute all the weapons to random estates.
      */
     private void initialiseWeapons() {
         String[][] weaponData = {{"Broom", "b"}, {"Scissors", "s"}, {"Knife", "k"}, {"Shovel", "v"}, {"iPad", "i"}};
@@ -250,7 +259,7 @@ public class Game {
     }
 
     /**
-     * Creates the game card instances
+     * Creates the game card instances.
      */
     private void initialiseCards() {
         String[][] cardData = {{
@@ -265,7 +274,7 @@ public class Game {
 
     /**
      * Picks cards from the game cards and notes them as the murder cards
-     * Ensures that one of each type of card (character, weapon, estate) is a murder card
+     * Ensures that one of each type of card (character, weapon, estate) is a murder card.
      */
     private void pickMurderCards() {
         List<String> typesPickedForMurder = new ArrayList<>();
@@ -280,8 +289,8 @@ public class Game {
     }
 
     /**
-     * Distributes the (non-murder) cards from the game among the players and updates their worksheets
-     * Uses the 'round-robin' style of dealing to ensure equally distributed cards
+     * Distributes the (non-murder) cards from the game among the players and updates their worksheets.
+     * Uses the 'round-robin' style of dealing to ensure equally distributed cards.
      */
     private void distributeCardsToPlayers() {
 
@@ -308,8 +317,15 @@ public class Game {
     }
 
     /**
-     * let the player do a guess (assumed check for in a estate has already passed)
-     * return 1 for a successful solve, 0 otherwise
+     * Handles player guesses.
+     * Sets the input strings as part of the game's current guess.
+     * Can also handle player solve attempts.
+     * 
+     * @param character the guessed character
+     * @param weapon the guessed weapon
+     * @param solve whether this is a solve attempt
+     * 
+     * @return 1 for a successful solve, 0 otherwise
      */
     public int guess(String character, String weapon, boolean solve) {
         guessMade = true;
@@ -352,7 +368,7 @@ public class Game {
     }
 
     /**
-     * Checks to see whether a player's guess was correct
+     * Checks to see whether a player's guess was correct.
      * 
      * @return true if correct, false otherwise
      */
@@ -384,6 +400,7 @@ public class Game {
 
     /**
      * A refuteable card is a card in the guess attempt that a player (the refuter) possesses.
+     * Gets all refuteable cards of the refuter.
      * 
      * @param p the refuter
      * 
@@ -400,7 +417,9 @@ public class Game {
     }
 
     /**
-     * Method to randomly return a number 1-6
+     * Method to randomly return a number 1-6.
+     * 
+     * @return the outcome of rolling the dice
      */
     public int rollDice() {
         double max = 6;
@@ -408,18 +427,40 @@ public class Game {
         return (int) (Math.random() * (max - min + 1) + min);
     }
 
+    /**
+     * Adds an Item to an Estate, ensuring that this action is properly
+     * reflected in the fields of the Item and Estate involved.
+     * 
+     * @param item the Item being added
+     * @param estate the Estate being added to
+     */
     private void addItemToEstate(Item item, Estate estate) {
         estate.addItem(item);
         estate.updateContents();
         item.setEstate(estate);
     }
 
+    /**
+     * Removes an Item from an Estate, ensuring that this action is properly
+     * reflected in the fields of the Item and Estate involved.
+     * 
+     * @param item the Item being removed
+     * @param estate the Estate being removed from
+     */
     private void removeItemFromEstate(Item item, Estate estate) {
         estate.removeItem(item);
         estate.updateContents();
         item.setEstate(null);
     }
 
+    /**
+     * Quick transport of Items into Estates.
+     * Mainly used to teleport Characters and Weapons into an Estate
+     * when they have been guessed by a player in that Estate.
+     * 
+     * @param item the Item being transported
+     * @param toEstate the Estate being transported to
+     */
     private void teleportItem(Item item, Estate toEstate) {
         GameTile current = (GameTile) board.getTile(item.getY(), item.getX());
         current.clearStored();
@@ -430,6 +471,16 @@ public class Game {
         addItemToEstate(item, toEstate);
     }
 
+    /**
+     * Controls player movement action of their Character into an Estate.
+     * Because the inside of an Estate can be treated as a single movement space,
+     * this movement is instead treated as the addition of a Character into
+     * the contents of the Estate.
+     * 
+     * @param character the character being moved
+     * @param estate the estate being moved into
+     * @return 1 if the movement successfully occurred, 0 otherwise
+     */
     public int moveCharToEstate(Character character, Estate estate) {
         if(character.getEstate() != estate){
             estate.addItem(character);
@@ -443,6 +494,19 @@ public class Game {
         return 0;
     }
 
+    /**
+     * Controls player movement action of their Character out of an Estate.
+     * Because the inside of an Estate can be treated as a single movement space,
+     * this movement is instead treated as the removal of a Character from
+     * the contents of the Estate.
+     * Additionally, the Character must be moved to the Estate's dedicated exit point,
+     * otherwise, glitching through the EntraceTile and free movement within the Estate's
+     * Tiles can occur.
+     * 
+     * @param character the character being moved
+     * @param estate the estate being moved out of
+     * @return 1 if the movement successfully occurred, 0 otherwise
+     */
     public int moveCharOutOfEstate(Character character, EntranceTile exit) {
         if (board.isSafeMove(exit.getExitY(), exit.getExitX())) {
             GameTile next = (GameTile) board.getTile(exit.getExitY(), exit.getExitX());
@@ -457,6 +521,16 @@ public class Game {
         return 0;
     }
 
+    /**
+     * Movement of a character. This is done by updating the 
+     * coordinates of the character.
+     * 
+     * @param character the character being moved
+     * @param newY the new Y coordinate
+     * @param newX the new X coordinate
+     * 
+     * @return 1 if the movement successfully occurred, 0 otherwise
+     */
     private int moveChar(Character character, int newY, int newX) {
         if (board.isSafeMove(newY, newX)) {
             GameTile next = (GameTile) board.getTile(newY, newX);
@@ -471,6 +545,16 @@ public class Game {
         return 0;
     }
 
+    /**
+     * Directional movement of a character.
+     * Uses the moveChar method but only to a fixed number of Tiles - 
+     * the Tiles immediately adjacent to the character.
+     * 
+     * @param character the character being moved
+     * @param directionthe direction being moved in
+     * 
+     * @return 1 if the movement successfully occurred, 0 otherwise
+     */
     public int moveInDirection(Character character, Direction direction) {
 
         // Find coordinates of next direction, or which exit to take
@@ -513,6 +597,9 @@ public class Game {
         return 0;
     }
 
+    /**
+     * Updates the turn order of the game.
+     */
     public void updateTurn() {
         int index = players.indexOf(turn);
             index++;
@@ -538,158 +625,4 @@ public class Game {
             }
         }
     }
-
-
-    // OLD GAME LOGIC MANAGER, DEFUNCT NOW
-
-    /* 
-    public void gameManager(Scanner scanner) {
-        String input = "0";
-        while (isInProgress) {
-            if (turn.getIsEligible()) {
-                boolean diceRolled = false;
-                while (diceTotal != 0 || !diceRolled) {
-                    System.out.print('\u000C');
-                    board.draw();
-                    //work sheet print
-                    turn.getWorksheet().printWorksheet();
-                    displayLocations();
-
-                    //normal movement or action
-                    if (diceRolled && !input.equals("2")) {
-
-                        System.out.println("You have " + diceTotal + " moves remaining!");
-                        System.out.println("Do you want to move your character or perform an action?");
-                        System.out.println();
-
-                        System.out.println("Enter 1 to open the movement menu.");
-                        System.out.println("Enter 2 to perform an action.");
-
-                        input = scanner.nextLine();
-                        if (input.equals("1")) {
-                            takePlayerInput(scanner, turn);
-                            input = "0";
-                        }
-                        if (!input.equals("0")) {
-                            System.out.print('\u000C');
-                            board.draw();
-                            //work sheet print
-                            turn.getWorksheet().printWorksheet();
-                            displayLocations();
-                        }
-                    }
-
-                    //roll dice since dice has not been rolled yet
-                    if (input.equals("1") && !diceRolled) {
-                        int dice1 = rollDice();
-                        int dice2 = rollDice();
-                        diceTotal = dice1 + dice2;
-                        diceRolled = true;
-                    }
-
-                    if (input.equals("2")) {//open action menu
-
-                        System.out.println("What action do you want to do?");
-                        System.out.println();
-
-                        System.out.println("Enter 1 to make a guess.");
-                        System.out.println("Enter 2 to make a solve attempt.");
-                        System.out.println("Enter 3 to toggle grid on / grid off.");
-                        System.out.println("Enter 4 to return to the previous menu.");
-                        System.out.print("Enter number here: ");
-
-                        input = scanner.nextLine();
-
-                        if (input.equals("1") && turn.getCharacter().getEstate() != null) {
-                            int i = guess(turn, scanner);
-                            if(i != 2){
-                                diceRolled = true;
-                            }
-                        }
-                        if (input.equals("2") && turn.getCharacter().getEstate() != null) {
-                            int i = guess(turn, scanner);
-                            if (i == 1) {
-                                System.out.print('\u000C');
-                                System.out.println(turn.getName() + " guessed correctly!");
-                                System.out.println(turn.getName() + " Wins the game!");
-                                System.out.println("\ngame will end in 30 seconds");
-                                try {
-                                    Thread.sleep(30000);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                                isInProgress = false;
-                            } else if (i == 0) {
-                                turn.setIsEligible(false);
-                            }
-                        }
-                        if (input.equals("3")) {
-                            board.gridOn();
-                        }
-                        if (input.equals("4")) {
-                            input = "0";
-                        } else {
-                            input = "2";
-                        }
-
-                    } else if (!diceRolled) {//default role dice or action assuming dice have not been rolled yet
-                        System.out.println("Do you want to roll your dice or do an action?");
-                        System.out.println();
-
-                        System.out.println("Enter 1 to roll your dice.");
-                        System.out.println("Enter 2 to do an action.");
-
-                        input = scanner.nextLine();
-                    }
-
-                }
-            }
-            // tun update
-            int index = players.indexOf(turn);
-            index++;
-            if(index == players.size()){
-                index = 0;
-            }
-            switch (index) {
-                case 1:
-                    currentTurn = TurnOrder.Bert;
-                    turn = players.get(index);
-                    break;
-                case 2:
-                    currentTurn = TurnOrder.Malina;
-                    turn = players.get(index);
-                    break;
-                case 3:
-                    currentTurn = TurnOrder.Percy;
-                    turn = players.get(index);
-                    break;
-                case 0:
-                    currentTurn = TurnOrder.Lucilla;
-                    turn = players.get(index);
-                    break;
-            }
-            boolean lose = true;
-            for(Player p : players){
-                if(p.getIsEligible()){
-                    lose = false;
-                }
-            }
-            while (!input.equals("1")) {
-                System.out.print('\u000C');
-                if(lose){
-                    System.out.println("Game is over! All players failed to guess the murderer incorrectly.");
-                    System.out.println("Restart game?\n");
-                    System.out.println("Enter 1 for yes.");
-                }
-                else{
-                    board.draw();
-                    System.out.println("Turn is over! It is now " + turn.getName() + "'s turn.\n");
-                    System.out.println("Begin " + turn.getName() + "'s turn?\n");
-                    System.out.println("Enter 1 for yes.");
-                }
-                input = scanner.nextLine();
-            }
-            input = "0";
-        }
-    } */
 }

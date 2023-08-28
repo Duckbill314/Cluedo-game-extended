@@ -6,10 +6,20 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * TODO
+ * The GUI for HobbyDetectives. 
+ * 
+ * Has four component sections:
+ * - A static menu bar
+ * - A main view which is dynamically updated based on state
+ * - A sidebar which is dynamically updated based on state
+ * - A bottom bar which is dynamically updated based on state
+ * 
+ * Uses state machine logic to control what is displayed to the user.
+ * Has widgets, which are components with functional behaviour attached to them,
+ * and presets, which are groups of widgets that represent the state.
  *
- * @author Finley Neilson
  * @author William Huang
+ * @author Finley Neilson
  * @author Mazen Khallaf
  * @author James Goode
  */
@@ -831,11 +841,17 @@ public class Gui extends JFrame {
         return textPanel;
     }
 
-    // TODO Write the class comment
-    // TODO Write the method comments for this class
+    /**
+     * A JPanel used for displaying text.
+     * 
+     * @author 
+     */
     public class TextPanel extends JPanel {
         private JTextArea displayTextArea;
 
+        /**
+         * Constructor for the TextPanel class.
+         */
         public TextPanel() {
             setLayout(new GridBagLayout());
 
@@ -854,17 +870,28 @@ public class Gui extends JFrame {
             add(displayScrollPane, gbc);
         }
 
+        /**
+         * Adds text to be displayed.
+         * @param text
+         */
         public void addText(String text) {
             displayTextArea.append(text + "\n");
         }
 
+        /**
+         * Clears the display text.
+         */
         public void clearText() {
             displayTextArea.setText("");
             ;
         }
     }
 
-    // TODO
+    /**
+     * Creates a MidPanel.
+     * 
+     * @return the MidPanel.
+     */
     public MidPanel midWidget() {
         return new MidPanel();
     }
@@ -875,9 +902,12 @@ public class Gui extends JFrame {
      * @author William Huang
      * @author Finley Neilson
      * @author James Goode
-     * TODO Write the method comments for this class
+     * 
      */
     class MidPanel extends JPanel {
+        /**
+         * Constructor for the MidPanel class.
+         */
         public MidPanel() {
             addComponentListener(new ResizeListener());
 
@@ -945,6 +975,12 @@ public class Gui extends JFrame {
             return this.getHeight();
         }
 
+        /**
+         * Local class to MidPanel that handles resizing of the board in response
+         * to the GUI being resized.
+         * 
+         * @author James Goode
+         */
         private class ResizeListener implements ComponentListener {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -968,12 +1004,20 @@ public class Gui extends JFrame {
 
         }
 
+        /**
+         * Adds a JPanel to the middle GUI section.
+         * 
+         * @param adding the JPanel to be added.
+         */
         public void addPanel(JPanel adding) {
             this.add(adding);
             revalidate();
             repaint();
         }
 
+        /**
+         * Clears the middle GUI section.
+         */
         public void clearPanel() {
             removeAll();
             revalidate();
@@ -991,17 +1035,25 @@ public class Gui extends JFrame {
     /**
      * JPanel class for managing the right-hand sidebar of the GUI.
      *
-     * @author William Huang
-     * TODO write method comments
+     * @author James Goode
      */
     class SidePanel extends JPanel {
 
+        /**
+         * Adds a JPanel to the sidebar.
+         * 
+         * @param adding the JPanel being added
+         * @param b the BorderLayout position used
+         */
         public void addPanel(JPanel adding, BorderLayout b) {
             add(adding, b);
             revalidate();
             repaint();
         }
 
+        /**
+         * Clears the sidebar.
+         */
         public void clearPanel() {
             removeAll();
             revalidate();
@@ -1019,17 +1071,24 @@ public class Gui extends JFrame {
     /**
      * JPanel class for managing the bottom section of the GUI.
      *
-     * @author William Huang
-     * TODO write method comments
+     * @author James Goode
      */
     class BottomPanel extends JPanel {
-
+        /**
+         * Adds a JPanel to the bottom bar.
+         * 
+         * @param adding the JPanel being added
+         * @param b the BorderLayout position used
+         */
         public void addPanel(JPanel adding, BorderLayout b) {
             add(adding, b);
             revalidate();
             repaint();
         }
 
+        /**
+         * Clears the bottom bar.
+         */
         public void clearPanel() {
             removeAll();
             revalidate();
@@ -1068,18 +1127,20 @@ public class Gui extends JFrame {
      *
      * @author William Huang
      * @author Finley Neilson
-     * TODO Write method comments
      */
     class RadioPanel extends JPanel {
-        public RadioPanel() {
-        }
-
+        /**
+         * An ArrayList of the JRadioButtons in the RadioPanel.
+         */
         public ArrayList<JRadioButton> radioButtons = new ArrayList<>();
 
+        /**
+         * Adds a JRadioButton to the panel.
+         * @param button
+         */
         public void addButton(JRadioButton button) {
             radioButtons.add(button);
         }
-
         public ArrayList<JRadioButton> getRadioButtons() {
             return this.radioButtons;
         }

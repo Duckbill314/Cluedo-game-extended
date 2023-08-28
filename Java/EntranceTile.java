@@ -1,6 +1,8 @@
 /**
- * The `EntranceTile` class represents a tile on the game board that serves as an entrance to an estate.
- * It extends the `Tile` class and includes information about the associated estate and exit coordinates.
+ * The EntranceTile class represents a tile on the game board that serves as an entrance to an estate.
+ * It extends the Tile class and includes information about the associated estate and exit coordinates.
+ * 
+ * @author William Huang
  */
 public class EntranceTile extends Tile {
 
