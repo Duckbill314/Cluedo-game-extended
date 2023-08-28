@@ -844,7 +844,7 @@ public class Gui extends JFrame {
     /**
      * A JPanel used for displaying text.
      * 
-     * @author 
+     * @author James Goode
      */
     public class TextPanel extends JPanel {
         private JTextArea displayTextArea;
