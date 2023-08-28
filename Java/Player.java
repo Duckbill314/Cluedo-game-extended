@@ -4,6 +4,7 @@ import java.util.*;
  * The Player class represents a player in the game.
  *
  * @author William Huang
+ * @author James Goode
  */
 public class Player {
 
