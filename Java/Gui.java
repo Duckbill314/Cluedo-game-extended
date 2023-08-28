@@ -11,9 +11,11 @@ public class Gui extends JFrame {
     private SidePanel sidebar;
     private BottomPanel bottomBar;
     private MidPanel mainView;
-    
+
     public int squareWidth = 0;
     public int squareHeight = 0;
+
+    private Map<String,CPosition> people = new HashMap<>();
 
     // state logic
     private boolean textOrBoardPanel = true; // true for text panel, false for board panel
@@ -40,19 +42,19 @@ public class Gui extends JFrame {
         JMenuItem textItem = new JMenuItem("Text Panel");
         JMenuItem boardItem = new JMenuItem("Board Panel");
         textItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textOrBoardPanel = true;
-                triggerStateOnce(currentState);
-            }
-        });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    textOrBoardPanel = true;
+                    triggerStateOnce(currentState);
+                }
+            });
         boardItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textOrBoardPanel = false;
-                triggerStateOnce(currentState);
-            }
-        });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    textOrBoardPanel = false;
+                    triggerStateOnce(currentState);
+                }
+            });
         menuBar.add(switchMenu);
         switchMenu.add(textItem);
         switchMenu.add(boardItem);
@@ -78,9 +80,7 @@ public class Gui extends JFrame {
         setPlayerCountPreset();
     }
 
-
     // PRESETS
-
     /**
      * Changes only the bottom bar, good for quick and easy replacement.
      * If replacing multiple components, do not use this method.
@@ -229,12 +229,12 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int i = (int) playerCountSelect.getSelectedItem();
-                game.setPlayerCount(i);
-                setPlayerNamePreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    int i = (int) playerCountSelect.getSelectedItem();
+                    game.setPlayerCount(i);
+                    setPlayerNamePreset();
+                }
+            });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -258,27 +258,27 @@ public class Gui extends JFrame {
         ArrayList<JRadioButton> radioButtons = charSelRadio.getRadioButtons();
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Character selected = null;
-                for (int i = 0; i < radioButtons.size(); i++) {
-                    if (radioButtons.get(i).isSelected()) {
-                        selected = game.getModifiableCharacterList().get(i);
-                        game.removeFromModifiableCharacterList(i);
+                public void actionPerformed(ActionEvent e) {
+                    Character selected = null;
+                    for (int i = 0; i < radioButtons.size(); i++) {
+                        if (radioButtons.get(i).isSelected()) {
+                            selected = game.getModifiableCharacterList().get(i);
+                            game.removeFromModifiableCharacterList(i);
+                        }
+                    }
+                    if (selected != null) {
+                        game.addPlayer(new Player(selected, new Worksheet(), insertNameTextField.getText(), true));
+                        game.incrementPlayerInitCount();
+                        sidebar.clearPanel();
+                        if (game.getPlayerInitCount() < game.getPlayerCount()) {
+                            setPlayerNamePreset();
+                        } else {
+                            game.setupGame();
+                            setPassTabletPreset();
+                        }
                     }
                 }
-                if (selected != null) {
-                    game.addPlayer(new Player(selected, new Worksheet(), insertNameTextField.getText(), true));
-                    game.incrementPlayerInitCount();
-                    sidebar.clearPanel();
-                    if (game.getPlayerInitCount() < game.getPlayerCount()) {
-                        setPlayerNamePreset();
-                    } else {
-                        game.setupGame();
-                        setPassTabletPreset();
-                    }
-                }
-            }
-        });
+            });
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -305,15 +305,15 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.setDiceTotal(0);
-                game.setDiceRolled(false);
-                game.setGuessMade(false);
-                game.setRefuteCount(0);
-                game.clearUsedTiles();
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.setDiceTotal(0);
+                    game.setDiceRolled(false);
+                    game.setGuessMade(false);
+                    game.setRefuteCount(0);
+                    game.clearUsedTiles();
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
@@ -341,10 +341,10 @@ public class Gui extends JFrame {
 
         // action listener for button
         OKButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setRefutePreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setRefutePreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(OKButton);
@@ -359,7 +359,7 @@ public class Gui extends JFrame {
      */
     private JPanel playerMoveOrGuessWidget() {
         JLabel instructionLabel = new JLabel(String.format("You are playing as %s (%s)", game.getCurrentPlayer().getCharacter().getName(),
-                game.getCurrentPlayer().getCharacter().getDisplayIcon()));
+                    game.getCurrentPlayer().getCharacter().getDisplayIcon()));
         JButton moveButton = new JButton("Move");
         JButton guessButton = new JButton("Guess/Solve");
         JButton endTurnButton = new JButton("End turn");
@@ -369,33 +369,33 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         moveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getCurrentPlayer().getIsEligible()) {
-                    if (!game.getDiceRolled()) {
-                        setDiceRollPreset();
-                    } else {
-                        setMovementPreset();
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getCurrentPlayer().getIsEligible()) {
+                        if (!game.getDiceRolled()) {
+                            setDiceRollPreset();
+                        } else {
+                            setMovementPreset();
+                        }
+                    } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                        setPlayerTurnPreset();
                     }
-                } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
-                    setPlayerTurnPreset();
                 }
-            }
-        });
+            });
         guessButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getCurrentPlayer().getIsEligible() && game.getCurrentPlayer().getCharacter().isInEstate() && !game.getGuessMade()) {
-                    setGuessPreset();
-                } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
-                    setPlayerTurnPreset();
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getCurrentPlayer().getIsEligible() && game.getCurrentPlayer().getCharacter().isInEstate() && !game.getGuessMade()) {
+                        setGuessPreset();
+                    } else { // TODO: THIS IS A GOOD OPPORTUNITY TO IMPLEMENT A JDialog error message
+                        setPlayerTurnPreset();
+                    }
                 }
-            }
-        });
+            });
         endTurnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.updateTurn();
-                setPassTabletPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.updateTurn();
+                    setPassTabletPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(moveButton);
@@ -420,17 +420,17 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         rollButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.setDiceRolled(true);
-                game.setDiceTotal(game.rollDice() + game.rollDice());
-                setMovementPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.setDiceRolled(true);
+                    game.setDiceTotal(game.rollDice() + game.rollDice());
+                    setMovementPreset();
+                }
+            });
         returnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(rollButton);
@@ -457,46 +457,46 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         upButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Up);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Up);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         rightButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Right);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Right);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         downButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Down);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Down);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         leftButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (game.getDiceTotal() > 0) {
-                    int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Left);
-                    game.decrementDiceTotal(i);
+                public void actionPerformed(ActionEvent e) {
+                    if (game.getDiceTotal() > 0) {
+                        int i = game.moveInDirection(game.getCurrentPlayer().getCharacter(), Game.Direction.Left);
+                        game.decrementDiceTotal(i);
+                    }
+                    setMovementPreset();
                 }
-                setMovementPreset();
-            }
-        });
+            });
         returnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(instructionLabel);
         panel.add(upButton);
@@ -532,37 +532,37 @@ public class Gui extends JFrame {
 
         // action listeners for buttons
         guessButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), false);
-                setPassTabletRefutePreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), false);
+                    setPassTabletRefutePreset();
+                }
+            });
         solveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int result = game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), true);
-                if (result == 1) {
-                    setGameOverPreset();
-                } else {
-                    boolean gameOver = true;
-                    for (Player p : game.getPlayers()) {
-                        if (p.getIsEligible()) {
-                            gameOver = false;
-                        }
-                    }
-                    if (gameOver) {
+                public void actionPerformed(ActionEvent e) {
+                    int result = game.guess((String) characterBox.getSelectedItem(), (String) weaponBox.getSelectedItem(), true);
+                    if (result == 1) {
                         setGameOverPreset();
                     } else {
-                        game.getCurrentPlayer().setIsEligible(false);
-                        setPlayerTurnPreset();
+                        boolean gameOver = true;
+                        for (Player p : game.getPlayers()) {
+                            if (p.getIsEligible()) {
+                                gameOver = false;
+                            }
+                        }
+                        if (gameOver) {
+                            setGameOverPreset();
+                        } else {
+                            game.getCurrentPlayer().setIsEligible(false);
+                            setPlayerTurnPreset();
+                        }
                     }
                 }
-            }
-        });
+            });
         returnButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setPlayerTurnPreset();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    setPlayerTurnPreset();
+                }
+            });
 
         panel.add(estateLabel);
         panel.add(characterLabel);
@@ -602,7 +602,7 @@ public class Gui extends JFrame {
         return board;
     }
 
-     class BoardPanel extends JPanel {
+    class BoardPanel extends JPanel {
         private final Color wallTileColor = Color.BLACK;
         private final Color enteranceTileColor = Color.DARK_GRAY;
         private final Color tileBorderColor = Color.BLACK;
@@ -611,13 +611,13 @@ public class Gui extends JFrame {
 
         public JPanel wallTile(int row, int col) {
             JPanel panel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.setColor(wallTileColor);
-                    g.fillRect(0, 0, squareWidth, squareHeight);
-                }
-            };
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        super.paintComponent(g);
+                        g.setColor(wallTileColor);
+                        g.fillRect(0, 0, squareWidth, squareHeight);
+                    }
+                };
 
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
             panel.setPreferredSize(new Dimension(squareWidth, squareHeight));
@@ -626,48 +626,53 @@ public class Gui extends JFrame {
 
         public JPanel gameTile(int row, int col, String letter) {
             JPanel panel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.setColor(gameTileColor);
-                    g.fillRect(0, 0, squareWidth, squareHeight);
+                    @Override
+                    protected void paintComponent(Graphics g) {
 
-                    if (!letter.isEmpty()) {
-                        // Set a distinct color for the letter
-                        g.setColor(itemLetterColor);
+                        super.paintComponent(g);
+                        g.setColor(gameTileColor);
+                        g.fillRect(0, 0, squareWidth, squareHeight);
 
-                        // Drawing the letter
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        FontMetrics fm = g.getFontMetrics();
-                        int x = (squareWidth - fm.charWidth(letter.charAt(0))) / 2;  // Use charAt(0) to get the first character from the string
-                        int y = (squareHeight + fm.getAscent() - fm.getDescent()) / 2;
-                        g.drawString(letter, x, y);
+                        if (!letter.isEmpty()) {
+
+                            // Set a distinct color for the letter
+                            g.setColor(itemLetterColor);
+
+                            // Drawing the letter
+                            g.setFont(new Font("Arial", Font.BOLD, 20));
+                            FontMetrics fm = g.getFontMetrics();
+                            int x = (squareWidth - fm.charWidth(letter.charAt(0))) / 2;  // Use charAt(0) to get the first character from the string
+                            int y = (squareHeight + fm.getAscent() - fm.getDescent()) / 2;
+
+                            people.put(letter,new CPosition(x+(col*squareWidth),y+(row*squareHeight)));
+
+                            g.drawString(letter, x, y);
+                        }
+
                     }
-                }
-            };
+                };
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
             panel.setPreferredSize(new Dimension(squareWidth, squareHeight));
             return panel;
         }
-
 
         public JPanel enteranceTile(int row, int col) {
             JPanel panel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.setColor(enteranceTileColor);
-                    g.fillRect(0, 0, squareWidth, squareHeight);
-                }
-            };
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        super.paintComponent(g);
+                        g.setColor(enteranceTileColor);
+                        g.fillRect(0, 0, squareWidth, squareHeight);
+                    }
+                };
 
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
             panel.setPreferredSize(new Dimension(squareWidth, squareHeight));
             return panel;
         }
 
-
     }
+    public record CPosition(int x, int y) {}
 
     /**
      * Shows the player's worksheet
@@ -710,15 +715,15 @@ public class Gui extends JFrame {
             JButton OKButton = new JButton("OK");
 
             OKButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    for (Card c : game.getCards()) {
-                        if (c.getName().equals((String) cardBox.getSelectedItem())) {
-                            game.getCurrentPlayer().getWorksheet().addShownCard(c);
+                    public void actionPerformed(ActionEvent e) {
+                        for (Card c : game.getCards()) {
+                            if (c.getName().equals((String) cardBox.getSelectedItem())) {
+                                game.getCurrentPlayer().getWorksheet().addShownCard(c);
+                            }
                         }
+                        setPlayerTurnPreset();
                     }
-                    setPlayerTurnPreset();
-                }
-            });
+                });
 
             panel.add(refuteLabel);
             panel.add(cardBox);
@@ -728,14 +733,14 @@ public class Gui extends JFrame {
             JButton OKButton = new JButton("OK");
 
             OKButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (game.getRefuteCount() < game.getPlayerCount() - 1) {
-                        setPassTabletRefutePreset();
-                    } else {
-                        setPlayerTurnPreset();
+                    public void actionPerformed(ActionEvent e) {
+                        if (game.getRefuteCount() < game.getPlayerCount() - 1) {
+                            setPassTabletRefutePreset();
+                        } else {
+                            setPlayerTurnPreset();
+                        }
                     }
-                }
-            });
+                });
 
             panel.add(refuteLabel);
             panel.add(OKButton);
@@ -806,39 +811,98 @@ public class Gui extends JFrame {
     class MidPanel extends JPanel {
         public MidPanel() {
             addComponentListener(new ResizeListener());
+
+            addMouseMotionListener(new MouseMotionAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        System. out. print('\u000C');
+
+                        int mouseX = e.getX();
+                        int mouseY = e.getY();
+
+                        for (Map.Entry<String, CPosition> entry : people.entrySet()) {
+                            CPosition position = entry.getValue();
+                            int Cx =  position.x();
+                            int Cy =  position.y();
+
+                            // System.out.println(entry.getKey()+" is at " +position.x() +" "+position.y());
+
+                            double ac = Math.abs(Cy - mouseY);
+                            double cb = Math.abs(Cx - mouseX);
+
+                            double distance = Math.hypot(ac, cb);
+
+                            if(distance<20){
+
+                                JFrame frame = new JFrame("Joke Dialog Example");
+                                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                                JDialog dialog = new JDialog(frame, "Item Info", true);
+
+                                String shortenedName = entry.getKey();
+                                
+                                JLabel jokeLabel = new JLabel(game.findFullName(shortenedName));
+                                
+                                jokeLabel.setHorizontalAlignment(JLabel.CENTER);
+
+                                JButton exitButton = new JButton("Exit");
+                                exitButton.addActionListener(new ActionListener() {
+                                        @Override
+                                        public void actionPerformed(ActionEvent e) {
+                                            dialog.dispose();
+                                            frame.dispose();
+                                        }
+                                    });
+                                JPanel panel = new JPanel(new BorderLayout());
+                                panel.add(jokeLabel, BorderLayout.CENTER);
+                                panel.add(exitButton, BorderLayout.SOUTH);
+
+                                dialog.getContentPane().add(panel);
+                                dialog.pack();
+                                dialog.setLocationRelativeTo(frame);
+                                dialog.setVisible(true);
+
+                            }
+                            //System.out.println();
+                            //System.out.println(entry.getKey()+" is "+distance+" pixels away");
+
+                        }
+
+                    }
+                });
         }
 
         public int width(){
-        return this.getWidth();
+            return this.getWidth();
         }
-        
+
         public int height(){
-          return this.getHeight();
+            return this.getHeight();
         }
-        
+
         private class ResizeListener implements ComponentListener {
-        @Override
-        public void componentResized(ComponentEvent e) {
-            triggerStateOnce(currentState);
-        }
-        
-         @Override
-        public void componentMoved(ComponentEvent e) {
-            // to stop abstract
+            @Override
+            public void componentResized(ComponentEvent e) {
+                triggerStateOnce(currentState);
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                // to stop abstract
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                // to stop abstract
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                // to stop abstract
+            }
+
         }
 
-        @Override
-        public void componentShown(ComponentEvent e) {
-            // to stop abstract
-        }
-
-        @Override
-        public void componentHidden(ComponentEvent e) {
-            // to stop abstract
-        }
-        
-        }
-        
         public void addPanel(JPanel adding) {
             this.add(adding);
             revalidate();
@@ -908,14 +972,14 @@ public class Gui extends JFrame {
             JRadioButton radioButton = new JRadioButton(c.getName());
             radioPanel.addButton(radioButton);
             radioButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    for (JRadioButton b : radioPanel.getRadioButtons()) {
-                        b.setSelected(false);
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        for (JRadioButton b : radioPanel.getRadioButtons()) {
+                            b.setSelected(false);
+                        }
+                        radioButton.setSelected(true);
                     }
-                    radioButton.setSelected(true);
-                }
-            });
+                });
             radioPanel.add(radioButton);
         }
         return radioPanel;
@@ -947,35 +1011,35 @@ public class Gui extends JFrame {
     private void triggerStateOnce(State state) {
         switch (currentState) {
             case PlayerCount -> {
-                setPlayerCountPreset();
-            }
+                    setPlayerCountPreset();
+                }
             case PlayerName -> {
-                setPlayerNamePreset();
-            }
+                    setPlayerNamePreset();
+                }
             case PassTablet -> {
-                setPassTabletPreset();
-            }
+                    setPassTabletPreset();
+                }
             case PlayerTurn -> {
-                setPlayerTurnPreset();
-            }
+                    setPlayerTurnPreset();
+                }
             case DiceRoll -> {
-                setDiceRollPreset();
-            }
+                    setDiceRollPreset();
+                }
             case Movement -> {
-                setMovementPreset();
-            }
+                    setMovementPreset();
+                }
             case Guess -> {
-                setGuessPreset();
-            }
+                    setGuessPreset();
+                }
             case PassTabletRefute -> {
-                setPassTabletRefutePreset();
-            }
+                    setPassTabletRefutePreset();
+                }
             case Refute -> {
-                setRefutePreset();
-            }
+                    setRefutePreset();
+                }
             case GameOver -> {
-                setGameOverPreset();
-            }
+                    setGameOverPreset();
+                }
         }
     }
 }
