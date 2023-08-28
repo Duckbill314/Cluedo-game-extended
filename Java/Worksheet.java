@@ -6,6 +6,7 @@ import java.util.*;
  * and displaying the contents of the worksheet.
  *
  * @author William Huang
+ * @author James Goode
  */
 public class Worksheet {
 
