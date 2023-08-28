@@ -4,12 +4,35 @@ import java.util.*;
  * The `Board` class represents the game board for Hobby Detective.
  * It contains methods for initializing the board, creating estates,
  * managing tiles and estates, and checking the safety of moves.
+ *
+ * @author Mazen Khallaf
+ * @author William Huang
+ * @version // TODO
  */
 public class Board {
-    private final int ROWS = 24;
-    private final int COLS = 24;
+    /**
+     * The number of rows on the game board
+     */
+    private static final int ROWS = 24;
+
+    /**
+     * The number of columns on the game board
+     */
+    private static final int COLS = 24;
+
+    /**
+     * The border character used for visual representation of the game board.
+     */
     private String BORDER = "|";
+
+    /**
+     * The two-dimensional array representing the game board with tiles.
+     */
     private Tile[][] board = new Tile[ROWS][COLS];
+
+    /**
+     * A list of estates present on the game board.
+     */
     private List<Estate> estates = new ArrayList<Estate>();
 
     /**
@@ -19,26 +42,13 @@ public class Board {
         buildGameSpace();
 
         // Create and initialize estates
-        estates.add(buildEstate("Haunted House"));
-        estates.add(buildEstate("Calamity Castle"));
-        estates.add(buildEstate("Manic Manor"));
-        estates.add(buildEstate("Peril Palace"));
-        estates.add(buildEstate("Visitation Villa"));
-
+        initializeEstates();
         // Build estate structures on the board
-        buildSquareEstate(2, 2, estates.get(0));
-        buildSquareEstate(17, 2, estates.get(1));
-        buildSquareEstate(2, 17, estates.get(2));
-        buildSquareEstate(17, 17, estates.get(3));
-
-        buildRectangleEstate(10, 9, estates.get(4));
+        buildEstateStructures();
 
         // Build entrances and grey areas
         buildEntrances();
-        buildGreyArea(5, 11);
-        buildGreyArea(11, 5);
-        buildGreyArea(11, 17);
-        buildGreyArea(17, 11);
+        buildGreyAreas();
     }
 
     /**
@@ -51,6 +61,29 @@ public class Board {
             }
         }
     }
+
+    /**
+     * Initializes the list of estates.
+     */
+    private void initializeEstates() {
+        estates.add(new Estate("Haunted House"));
+        estates.add(new Estate("Calamity Castle"));
+        estates.add(new Estate("Manic Manor"));
+        estates.add(new Estate("Peril Palace"));
+        estates.add(new Estate("Visitation Villa"));
+    }
+
+    /**
+     * Builds estate structures on the board.
+     */
+    private void buildEstateStructures() {
+        buildSquareEstate(2, 2, estates.get(0));
+        buildSquareEstate(17, 2, estates.get(1));
+        buildSquareEstate(2, 17, estates.get(2));
+        buildSquareEstate(17, 17, estates.get(3));
+        buildRectangleEstate(10, 9, estates.get(4));
+    }
+
 
     /**
      * Creates and returns an estate with the given name.
@@ -126,6 +159,16 @@ public class Board {
                 estate.addEstateTile((GameTile)board[i][j]);
             }
         }
+    }
+
+    /**
+     * Builds grey areas on the board.
+     */
+    private void buildGreyAreas() {
+        buildGreyArea(5, 11);
+        buildGreyArea(11, 5);
+        buildGreyArea(11, 17);
+        buildGreyArea(17, 11);
     }
 
     /**
@@ -236,7 +279,21 @@ public class Board {
      * @param tile  The tile to set.
      */
     public void setTile(int y, int x, Tile tile) {
-        board[y][x] = tile;
+        if (isValidPosition(y, x)) {
+            board[y][x] = tile;
+        } else {
+            // TODO Handle an out-of-bounds error.
+        }
+    }
+
+    /**
+     * Checks if the provided coordinates are within the valid bounds of the game board.
+     *
+     * @param y The row index.
+     * @param x The column index.
+     * @return true if the coordinates are valid; otherwise, false.
+     */    private boolean isValidPosition(int y, int x) {
+        return y >= 0 && y < ROWS && x >= 0 && x < COLS;
     }
 
     /**
@@ -247,14 +304,12 @@ public class Board {
      * @return      The tile at the specified position.
      */
     public Tile getTile(int y, int x) {
-        return board[y][x];
-    }
-
-    /**
-     * Deletes the current game board by initializing a new one.
-     */
-    public void deleteBoard() {
-        board = new Tile[ROWS][COLS];
+        if (isValidPosition(y, x)) {
+            return board[y][x];
+        } else {
+            // TODO Handle an out-of-bounds error.
+            return null; // Temporary solution for now
+        }
     }
 
     /**
@@ -278,27 +333,31 @@ public class Board {
 
 
     /**
-     * Checks if a move to the specified position is safe (i.e. not occupied by a wall, greyspace, or a player).
+     * Checks if a move to the specified position is safe (i.e. not occupied by a wall, gray-space, or a player).
      *
      * @param y The row index.
      * @param x The column index.
      * @return  True if the move is safe; otherwise, false.
      */
     public boolean isSafeMove(int y, int x) {
-        if (x > 23 || x < 0 || y > 23 || y < 0) {
+        // Checks if the provided coordinates are within the bounds of the board
+        if (!isValidPosition(y, x)) {
             return false;
         }
 
         Tile target = getTile(y, x);
 
+        // Tile is considered safe if it is an EntranceceTile
         if (target instanceof EntranceTile) {
             return true;
         }
 
+        // If the tile is not a GameTile, it is not safe
         if (!(target instanceof GameTile)) {
             return false;
         }
 
+        // If the tile is considered 'empty', it is safe
         return ((GameTile) target).getStored().getName().equals("empty");
     }
 
