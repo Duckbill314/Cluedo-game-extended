@@ -5,6 +5,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * TODO
+ *
+ * @author Finley Neilson
+ * @author William Huang
+ * @author Mazen Khallaf
+ * @author James Goode
+ */
 public class Gui extends JFrame {
     private Game game;
     // the three key frames that lie on the game frame
@@ -12,10 +20,17 @@ public class Gui extends JFrame {
     private BottomPanel bottomBar;
     private MidPanel mainView;
 
+    /** Width of each game square. */
     public int squareWidth = 0;
+
+    /** Height of each game square. */
     public int squareHeight = 0;
 
-    private Map<String,CPosition> people = new HashMap<>();
+    /**
+     * Map that stores positions of game characters.
+     * The keys are character names, and the values are their positions.
+     */
+    private Map<String, CPosition> people = new HashMap<>();
 
     // state logic
     private boolean textOrBoardPanel = true; // true for text panel, false for board panel
@@ -27,6 +42,11 @@ public class Gui extends JFrame {
     // global variables (need to be accessible across the file)
     private RadioPanel charSelRadio;
 
+    /**
+     * Constructs a `Gui` object for the "Hobby Detectives" game.
+     *
+     * @param game The game logic associated with the GUI.
+     */
     public Gui(Game game) {
         super("Hobby Detectives");
         this.game = game;
@@ -42,19 +62,19 @@ public class Gui extends JFrame {
         JMenuItem textItem = new JMenuItem("Text Panel");
         JMenuItem boardItem = new JMenuItem("Board Panel");
         textItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    textOrBoardPanel = true;
-                    triggerStateOnce(currentState);
-                }
-            });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textOrBoardPanel = true;
+                triggerStateOnce(currentState);
+            }
+        });
         boardItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    textOrBoardPanel = false;
-                    triggerStateOnce(currentState);
-                }
-            });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textOrBoardPanel = false;
+                triggerStateOnce(currentState);
+            }
+        });
         menuBar.add(switchMenu);
         switchMenu.add(textItem);
         switchMenu.add(boardItem);
@@ -81,9 +101,12 @@ public class Gui extends JFrame {
     }
 
     // PRESETS
+
     /**
      * Changes only the bottom bar, good for quick and easy replacement.
      * If replacing multiple components, do not use this method.
+     *
+     * @param widget The JPanel to set in the bottom bar.
      */
     private void setSingleWidgetPreset(JPanel widget) {
         //getContentPane().removeAll();
@@ -97,7 +120,7 @@ public class Gui extends JFrame {
      * Changes the bottom bar to the desired widget,
      * and clears the main view and sidebar.
      *
-     * @param widget
+     * @param widget The JPanel to set in the bottom bar.
      */
     private void setTripleWidgetPreset(JPanel widget) {
         bottomBar.clearPanel();
@@ -109,8 +132,10 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Resets all three main panels with a default mainView and sidebar.
-     * The bottomBar is dependent on the input.
+     * Resets all three main panels with a default main view and sidebar.
+     * The bottom bar is dependent on the input.
+     *
+     * @param widget The JPanel to set in the bottom bar.
      */
     private void setTripleWidgetWorksheetPreset(JPanel widget) {
         bottomBar.clearPanel();
@@ -129,7 +154,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the player count selection menu
+     * Switches the game interface to the player count selection menu.
      */
     private void setPlayerCountPreset() {
         currentState = State.PlayerCount;
@@ -137,7 +162,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the player name input menu
+     * Switches the game interface to the player name input menu.
      */
     private void setPlayerNamePreset() {
         currentState = State.PlayerName;
@@ -151,7 +176,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the tablet pass menu
+     * Switches the game interface to the tablet pass menu.
      */
     private void setPassTabletPreset() {
         currentState = State.PassTablet;
@@ -159,7 +184,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the player's turn menu
+     * Switches the game interface to the player's turn menu.
      */
     private void setPlayerTurnPreset() {
         currentState = State.PlayerTurn;
@@ -167,7 +192,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the dice roll menu
+     * Switches the game interface to the dice roll menu.
      */
     private void setDiceRollPreset() {
         currentState = State.DiceRoll;
@@ -175,7 +200,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the movement menu
+     * Switches the game interface to the movement menu.
      */
     private void setMovementPreset() {
         currentState = State.Movement;
@@ -183,7 +208,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the guessing menu
+     * Switches the game interface to the guessing menu.
      */
     private void setGuessPreset() {
         currentState = State.Guess;
@@ -191,7 +216,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the tablet pass menu specific to refuting
+     * Switches the game interface to the tablet pass menu specific to refuting.
      */
     private void setPassTabletRefutePreset() {
         currentState = State.PassTabletRefute;
@@ -199,7 +224,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the refuting menu
+     * Switches the game interface to the refuting menu.
      */
     private void setRefutePreset() {
         currentState = State.Refute;
@@ -207,7 +232,7 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Switches the game interface to the game over menu
+     * Switches the game interface to the game over menu.
      */
     private void setGameOverPreset() {
         currentState = State.GameOver;
@@ -217,9 +242,9 @@ public class Gui extends JFrame {
     // WIDGETS
 
     /**
-     * Creates and returns a JPanel for selecting the number of players
+     * Creates and returns a JPanel for selecting the number of players.
      *
-     * @return A JPanel containing the components to select the number of players
+     * @return A JPanel containing the components to select the number of players.
      */
     private JPanel getPlayerCountWidget() {
         JLabel instructionLabel = new JLabel("Select number of players");
@@ -247,9 +272,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Asks for the user to enter their name
+     * Asks for the user to enter their name.
      *
-     * @return
+     * @return A JPanel for entering the player's name.
      */
     private JPanel playerEnterNamesWidget() {
         JLabel instructionLabel = new JLabel(String.format("Player %d, please enter your name:", game.getPlayerInitCount() + 1));
@@ -294,9 +319,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Checks whether the tablet has been passed to the next player
+     * Checks whether the tablet has been passed to the next player.
      *
-     * @return
+     * @return A JPanel to indicate the tablet passing to the next player.
      */
     private JPanel tabletPassNextTurnWidget() {
         String name = game.getCurrentPlayer().getName();
@@ -325,7 +350,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Asks for the tablet to be passed to the refuter
+     * Asks for the tablet to be passed to the refuter.
+     *
+     * @return A JPanel to prompt passing the tablet to the refuter.
      */
     private JPanel tabletPassRefuteWidget() {
         game.incrementRefuteCount();
@@ -356,9 +383,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Player can choose to move, guess, or end their turn
+     * Player can choose to move, guess, or end their turn.
      *
-     * @return
+     * @return A JPanel to allow the player to choose their action.
      */
     private JPanel playerMoveOrGuessWidget() {
         JLabel instructionLabel = new JLabel(String.format("You are playing as %s (%s)", game.getCurrentPlayer().getCharacter().getName(),
@@ -411,9 +438,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Player can roll the dice, or return to the previous menu
+     * Player can roll the dice or return to the previous menu.
      *
-     * @return
+     * @return A JPanel to roll the dice or return to the previous menu.
      */
     private JPanel rollDiceWidget() {
         JLabel instructionLabel = new JLabel("Roll the dice!");
@@ -445,9 +472,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Player can move in one of four directions, or return to the previous menu
+     * Player can move in one of four directions or return to the previous menu.
      *
-     * @return
+     * @return A JPanel to allow the player to move or return.
      */
     private JPanel movementWidget() {
         JLabel instructionLabel = new JLabel(String.format("You have %d moves remaining", game.getDiceTotal()));
@@ -524,9 +551,9 @@ public class Gui extends JFrame {
     /**
      * Player can make a guess using dropboxes of the characters and weapons.
      * The estate is predetermined by the player's current estate.
-     * The player can choose to make a normal guess, or a solve attempt (or return to the previous menu);
+     * The player can choose to make a normal guess, a solve attempt, or return to the previous menu.
      *
-     * @return
+     * @return A JPanel to allow the player to make a guess or solve.
      */
     private JPanel guessWidget() {
         JLabel estateLabel = new JLabel(String.format("Estate: %s", game.getCurrentPlayer().getCharacter().getEstate().getName()));
@@ -590,11 +617,10 @@ public class Gui extends JFrame {
     }
 
     /**
-     * Creates full board by creating a board object and then adding cells
+     * Creates a full board by creating a board object and then adding cells.
      *
-     * @return
+     * @return A JPanel representing the game board.
      */
-
     private JPanel boardWidget() {
         BoardPanel board = new BoardPanel();
         board.setLayout(new GridLayout(24, 24, 0, 0));
@@ -615,6 +641,13 @@ public class Gui extends JFrame {
         return board;
     }
 
+    /**
+     * JPanel class for displaying the game board.
+     *
+     * @author Finley Neilson
+     * @author William Huang
+     * @author James Goode
+     */
     class BoardPanel extends JPanel {
         private final Color wallTileColor = Color.BLACK;
         private final Color enteranceTileColor = Color.DARK_GRAY;
@@ -622,6 +655,13 @@ public class Gui extends JFrame {
         private final Color gameTileColor = Color.GRAY;
         private final Color itemLetterColor = Color.CYAN;
 
+        /**
+         * Create a JPanel for a wall tile.
+         *
+         * @param row The row index of the tile.
+         * @param col The column index of the tile.
+         * @return The JPanel representing a wall tile.
+         */
         public JPanel wallTile(int row, int col) {
             JPanel panel = new JPanel() {
                     @Override
@@ -637,6 +677,14 @@ public class Gui extends JFrame {
             return panel;
         }
 
+        /**
+         * Create a JPanel for a game tile with an item letter.
+         *
+         * @param row    The row index of the tile.
+         * @param col    The column index of the tile.
+         * @param letter The letter to display on the game tile.
+         * @return The JPanel representing a game tile with an item letter.
+         */
         public JPanel gameTile(int row, int col, String letter) {
             JPanel panel = new JPanel() {
                     @Override
@@ -669,6 +717,13 @@ public class Gui extends JFrame {
             return panel;
         }
 
+        /**
+         * Create a JPanel for an entrance tile.
+         *
+         * @param row The row index of the tile.
+         * @param col The column index of the tile.
+         * @return The JPanel representing an entrance tile.
+         */
         public JPanel enteranceTile(int row, int col) {
             JPanel panel = new JPanel() {
                     @Override
@@ -685,14 +740,20 @@ public class Gui extends JFrame {
         }
 
     }
+
+
+    /**
+     * Represents a position on the board.
+     *
+     * @param x The x-coordinate of the position.
+     * @param y The y-coordinate of the position.
+     */
     public record CPosition(int x, int y) {}
 
     /**
-     * Allows a player to select which refuteable card to use to refute.
-     * If they make a refutation, it goes back to the guesser, to end their turn.
-     * If they cannot make a refutation, it is passed around to all the other players.
+     * Creates a JPanel for the refute widget, allowing players to select a refutable card if possible.
      *
-     * @return
+     * @return A JPanel for the refute widget.
      */
     private JPanel refuteWidget() {
         int refuter = game.getRefuter();
@@ -745,10 +806,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * The end of the game. Shows who the winner is - either the name of the person who solved correctly,
-     * or if all players fail to solve, then "Nobody".
+     * Creates a JPanel for the game over screen, displaying the winner.
      *
-     * @return
+     * @return A JPanel for the game over screen.
      */
     private JPanel gameOverWidget() {
         JLabel messageLabel = new JLabel(String.format("Game over! The winner is: %s", game.getWinner()));
@@ -761,7 +821,9 @@ public class Gui extends JFrame {
     }
 
     /**
-     * creates a text box that can be written to for user communication
+     * Creates a JPanel for displaying text information.
+     *
+     * @return A TextPanel for displaying text information.
      */
     public TextPanel textWidget() {
         TextPanel textPanel = new TextPanel();
@@ -769,6 +831,8 @@ public class Gui extends JFrame {
         return textPanel;
     }
 
+    // TODO Write the class comment
+    // TODO Write the method comments for this class
     public class TextPanel extends JPanel {
         private JTextArea displayTextArea;
 
@@ -800,10 +864,19 @@ public class Gui extends JFrame {
         }
     }
 
+    // TODO
     public MidPanel midWidget() {
         return new MidPanel();
     }
 
+    /**
+     * JPanel class for managing the middle section of the GUI.
+     *
+     * @author William Huang
+     * @author Finley Neilson
+     * @author James Goode
+     * TODO Write the method comments for this class
+     */
     class MidPanel extends JPanel {
         public MidPanel() {
             addComponentListener(new ResizeListener());
@@ -858,9 +931,6 @@ public class Gui extends JFrame {
                                 dialog.setVisible(true);
 
                             }
-                            //System.out.println();
-                            //System.out.println(entry.getKey()+" is "+distance+" pixels away");
-
                         }
 
                     }
@@ -918,9 +988,13 @@ public class Gui extends JFrame {
         return new SidePanel();
     }
 
+    /**
+     * JPanel class for managing the right-hand sidebar of the GUI.
+     *
+     * @author William Huang
+     * TODO write method comments
+     */
     class SidePanel extends JPanel {
-        public SidePanel() {
-        }
 
         public void addPanel(JPanel adding, BorderLayout b) {
             add(adding, b);
@@ -942,9 +1016,13 @@ public class Gui extends JFrame {
         return new BottomPanel();
     }
 
+    /**
+     * JPanel class for managing the bottom section of the GUI.
+     *
+     * @author William Huang
+     * TODO write method comments
+     */
     class BottomPanel extends JPanel {
-        public BottomPanel() {
-        }
 
         public void addPanel(JPanel adding, BorderLayout b) {
             add(adding, b);
@@ -959,6 +1037,11 @@ public class Gui extends JFrame {
         }
     }
 
+    /**
+     * Creates a RadioPanel for character selection.
+     *
+     * @return A RadioPanel for character selection.
+     */
     private RadioPanel characterSelectRadioWidget() {
         RadioPanel radioPanel = new RadioPanel();
         radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
@@ -980,6 +1063,13 @@ public class Gui extends JFrame {
         return radioPanel;
     }
 
+    /**
+     * RadioPanel class for managing radio buttons.
+     *
+     * @author William Huang
+     * @author Finley Neilson
+     * TODO Write method comments
+     */
     class RadioPanel extends JPanel {
         public RadioPanel() {
         }
@@ -995,17 +1085,20 @@ public class Gui extends JFrame {
         }
     }
 
+    /**
+     * Displays an error message in a popup dialog.
+     */
     private void errorMessagePopup() {
         JOptionPane.showMessageDialog(this, "Invalid action", "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
-     * Only to be used when switching between the Text and Board panels.
+     * Used for triggering state transitions when switching between Text and Board panels.
      * Normally, the state machine will operate by itself with each user action, but the
      * menu item toggle action exists outside of the state machine and needs another
      * way to trigger state events. Consider it a universal way to trigger a state.
      *
-     * @param state
+     * @param state The state to switch to.
      */
     private void triggerStateOnce(State state) {
         switch (currentState) {
