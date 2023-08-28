@@ -853,7 +853,7 @@ public class Gui extends JFrame {
                                         }
                                     });
                                 JPanel panel = new JPanel(new BorderLayout());
-                                panel.add(jokeLabel, BorderLayout.CENTER);
+                                panel.add(label, BorderLayout.CENTER);
                                 panel.add(exitButton, BorderLayout.SOUTH);
 
                                 dialog.getContentPane().add(panel);
