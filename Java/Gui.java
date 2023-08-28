@@ -833,16 +833,16 @@ public class Gui extends JFrame {
 
                             if(distance<20){
 
-                                JFrame frame = new JFrame("Joke Dialog Example");
+                                JFrame frame = new JFrame();
                                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
                                 JDialog dialog = new JDialog(frame, "Item Info", true);
 
                                 String shortenedName = entry.getKey();
                                 
-                                JLabel jokeLabel = new JLabel(game.findFullName(shortenedName));
+                                JLabel label = new JLabel(game.findFullName(shortenedName));
                                 
-                                jokeLabel.setHorizontalAlignment(JLabel.CENTER);
+                                label.setHorizontalAlignment(JLabel.CENTER);
 
                                 JButton exitButton = new JButton("Exit");
                                 exitButton.addActionListener(new ActionListener() {
