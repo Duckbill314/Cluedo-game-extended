@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.*;
 
 public class Gui extends JFrame {
@@ -10,6 +11,9 @@ public class Gui extends JFrame {
     private SidePanel sidebar;
     private BottomPanel bottomBar;
     private MidPanel mainView;
+    
+    public int squareWidth = 0;
+    public int squareHeight = 0;
 
     // state logic
     private boolean textOrBoardPanel = true; // true for text panel, false for board panel
@@ -116,7 +120,9 @@ public class Gui extends JFrame {
         if (textOrBoardPanel) {
             mainView.add(textWidget(), BorderLayout.CENTER);
         } else {
-            mainView.add(boardWidget(), BorderLayout.CENTER);
+            squareWidth = mainView.width()/24;
+            squareHeight = mainView.height()/24;
+            mainView.addPanel(boardWidget());
         }
         revalidate();
         repaint();
@@ -596,8 +602,7 @@ public class Gui extends JFrame {
         return board;
     }
 
-    class BoardPanel extends JPanel {
-        private final int squareSize = 20;
+     class BoardPanel extends JPanel {
         private final Color wallTileColor = Color.BLACK;
         private final Color enteranceTileColor = Color.DARK_GRAY;
         private final Color tileBorderColor = Color.BLACK;
@@ -610,12 +615,12 @@ public class Gui extends JFrame {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     g.setColor(wallTileColor);
-                    g.fillRect(0, 0, squareSize, squareSize);
+                    g.fillRect(0, 0, squareWidth, squareHeight);
                 }
             };
 
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
-            panel.setPreferredSize(new Dimension(squareSize, squareSize));
+            panel.setPreferredSize(new Dimension(squareWidth, squareHeight));
             return panel;
         }
 
@@ -625,7 +630,7 @@ public class Gui extends JFrame {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     g.setColor(gameTileColor);
-                    g.fillRect(0, 0, squareSize, squareSize);
+                    g.fillRect(0, 0, squareWidth, squareHeight);
 
                     if (!letter.isEmpty()) {
                         // Set a distinct color for the letter
@@ -634,14 +639,14 @@ public class Gui extends JFrame {
                         // Drawing the letter
                         g.setFont(new Font("Arial", Font.BOLD, 20));
                         FontMetrics fm = g.getFontMetrics();
-                        int x = (squareSize - fm.charWidth(letter.charAt(0))) / 2;  // Use charAt(0) to get the first character from the string
-                        int y = (squareSize + fm.getAscent() - fm.getDescent()) / 2;
+                        int x = (squareWidth - fm.charWidth(letter.charAt(0))) / 2;  // Use charAt(0) to get the first character from the string
+                        int y = (squareHeight + fm.getAscent() - fm.getDescent()) / 2;
                         g.drawString(letter, x, y);
                     }
                 }
             };
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
-            panel.setPreferredSize(new Dimension(squareSize, squareSize));
+            panel.setPreferredSize(new Dimension(squareWidth, squareHeight));
             return panel;
         }
 
@@ -652,12 +657,12 @@ public class Gui extends JFrame {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     g.setColor(enteranceTileColor);
-                    g.fillRect(0, 0, squareSize, squareSize);
+                    g.fillRect(0, 0, squareWidth, squareHeight);
                 }
             };
 
             panel.setBorder(BorderFactory.createLineBorder(tileBorderColor));
-            panel.setPreferredSize(new Dimension(squareSize, squareSize));
+            panel.setPreferredSize(new Dimension(squareWidth, squareHeight));
             return panel;
         }
 
@@ -800,10 +805,42 @@ public class Gui extends JFrame {
 
     class MidPanel extends JPanel {
         public MidPanel() {
+            addComponentListener(new ResizeListener());
         }
 
-        public void addPanel(JPanel adding, BorderLayout b) {
-            add(adding, b);
+        public int width(){
+        return this.getWidth();
+        }
+        
+        public int height(){
+          return this.getHeight();
+        }
+        
+        private class ResizeListener implements ComponentListener {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            triggerStateOnce(currentState);
+        }
+        
+         @Override
+        public void componentMoved(ComponentEvent e) {
+            // to stop abstract
+        }
+
+        @Override
+        public void componentShown(ComponentEvent e) {
+            // to stop abstract
+        }
+
+        @Override
+        public void componentHidden(ComponentEvent e) {
+            // to stop abstract
+        }
+        
+        }
+        
+        public void addPanel(JPanel adding) {
+            this.add(adding);
             revalidate();
             repaint();
         }
