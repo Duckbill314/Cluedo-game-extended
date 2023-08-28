@@ -3,6 +3,7 @@
  * It includes properties such as name, display icon, position, and an associated estate.
  * 
  * @author William Huang
+ * @author James Goode
  */
 public class Item {
 
